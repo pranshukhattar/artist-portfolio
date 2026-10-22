@@ -78,7 +78,7 @@ export function Nav() {
         <div className="wrap flex h-16 items-center justify-between md:h-20">
           <a href="#top" className="flex items-center gap-3" aria-label={`${siteConfig.name}, back to top`}>
             <LogoMark className="h-5 w-auto" />
-            <span className="label hidden sm:inline">{siteConfig.name}</span>
+            <span className="label">{siteConfig.name}</span>
           </a>
 
           <nav aria-label="Primary" className="hidden md:block">

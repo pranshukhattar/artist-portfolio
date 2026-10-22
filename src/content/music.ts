@@ -102,6 +102,9 @@ export const releases: Release[] = [
   },
 ];
 
+// The record that slides out of a sleeve (hero on phones, the Music chapter): a black disc from the collage.
+export const vinylCrop: Crop = { x: 40, y: 45, zoom: 2.8 };
+
 export const singles = releases.filter((r) => r.type === "single");
 
 export const getTrack = (id: string) => tracks.find((t) => t.id === id);

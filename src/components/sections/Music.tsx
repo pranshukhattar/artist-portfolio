@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getRelease, getTrack, playableTrackIds, releaseForTrack, singles, type Platform } from "@/content/music";
+import { getRelease, getTrack, playableTrackIds, releaseForTrack, singles, vinylCrop, type Platform } from "@/content/music";
 import { gsap, prefersReducedMotion, useGSAP } from "@/lib/motion";
 import { Chapter, ChapterTitle } from "@/components/motion/Chapter";
 import { MaskedReveal } from "@/components/motion/MaskedReveal";
@@ -12,9 +12,6 @@ import { Icon } from "@/components/ui/Icon";
 import { Marginalia } from "@/components/ui/Marginalia";
 import { RecordDisc } from "@/components/ui/RecordDisc";
 import { arrowNudge, button } from "@/components/ui/button";
-
-// The record inside the sleeve: a black disc from the collage.
-const VINYL = { x: 40, y: 45, zoom: 2.8 };
 
 const PLATFORMS: { key: Platform; label: string }[] = [
   { key: "spotify", label: "Spotify" },
@@ -121,7 +118,7 @@ function Featured({ selectedId }: { selectedId: string }) {
         <div data-sleeve-stage className="relative aspect-[1.42/1] w-full">
           <div data-vinyl className="absolute top-[3%] left-0 aspect-square h-[94%]">
             <div data-vinyl-swap className="size-full">
-              <RecordDisc crop={VINYL} spinning={playing} spin="3.5s" className="size-full shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)]" />
+              <RecordDisc crop={vinylCrop} spinning={playing} spin="3.5s" className="size-full shadow-[0_20px_40px_-16px_rgba(0,0,0,0.5)]" />
             </div>
           </div>
           <div data-sleeve className="absolute inset-y-0 left-0 aspect-square">

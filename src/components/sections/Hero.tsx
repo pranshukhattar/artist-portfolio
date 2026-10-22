@@ -100,10 +100,14 @@ export function Hero() {
   );
 
   return (
-    <section ref={root} id="top" aria-label="Introduction" className="relative h-[100svh] min-h-[620px] overflow-hidden bg-ink text-paper">
-      {/* Media: parallax wrapper → intro scale wrapper → hover zoom/follow layer.
-          Phones: the collage fills the top 60% and fades into ink; the copy sits below. */}
-      <div data-hero-parallax className="absolute inset-x-0 top-0 h-[60%] md:h-full">
+    <section
+      ref={root}
+      id="top"
+      aria-label="Introduction"
+      className="relative h-[100svh] min-h-[620px] overflow-hidden bg-ink text-paper"
+    >
+      {/* Media: parallax wrapper → intro scale wrapper → hover zoom/follow layer. */}
+      <div data-hero-parallax className="absolute inset-0">
         <div data-hero-media className="absolute inset-0">
           <div data-hero-pan className="absolute inset-0 will-change-transform">
             <Image
@@ -113,28 +117,33 @@ export function Hero() {
               priority
               placeholder="blur"
               sizes="100vw"
-              className="object-cover max-md:object-[25%_40%]"
+              className="object-cover max-md:object-[38%_50%]"
             />
           </div>
         </div>
       </div>
 
-      {/* Contrast. Desktop: ink from the left for the headline and from the bottom for the controls.
-          Phones: the collage's lower edge melts into the ink panel. */}
+      {/* Desktop contrast: ink from the left for the headline, from the top for the nav, from the bottom for the rail. */}
       <div aria-hidden="true" className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(17,17,17,0.92)_0%,rgba(17,17,17,0.7)_32%,rgba(17,17,17,0)_62%)] md:block" />
-      <div aria-hidden="true" className="absolute inset-x-0 top-[32%] h-[29%] bg-gradient-to-b from-transparent via-ink/75 to-ink md:hidden" />
-      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-ink/75 to-transparent" />
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 hidden h-36 bg-gradient-to-b from-ink/75 to-transparent md:block" />
       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 hidden h-40 bg-gradient-to-t from-ink/80 to-transparent md:block" />
 
+      {/* Phone contrast: long, soft ink washes behind the headline (top) and the call to action
+          (bottom), leaving the middle of the collage clear. No hard edges. */}
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[52%] bg-[linear-gradient(180deg,rgba(17,17,17,0.9)_0%,rgba(17,17,17,0.72)_38%,rgba(17,17,17,0)_100%)] md:hidden" />
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[50%] bg-[linear-gradient(0deg,rgba(17,17,17,0.95)_0%,rgba(17,17,17,0.75)_40%,rgba(17,17,17,0)_100%)] md:hidden" />
+
+      {/* Phones: a poster — headline at the top, the collage through the middle, the call to action at
+          the bottom. Desktop: everything centred on the left. */}
       <div
         data-hero-copy
-        className={`wrap relative flex h-full flex-col justify-end transition-[padding] duration-700 ease-out-expo md:justify-center md:pb-0 ${hasStarted ? "pb-[calc(200px+env(safe-area-inset-bottom))]" : "pb-[calc(140px+env(safe-area-inset-bottom))]"}`}
+        className={`wrap relative flex h-full flex-col pt-[calc(64px+3svh)] transition-[padding] duration-700 ease-out-expo md:justify-center md:pt-0 md:pb-0 ${hasStarted ? "pb-[calc(150px+env(safe-area-inset-bottom))]" : "pb-[calc(84px+env(safe-area-inset-bottom))]"}`}
       >
-        <h1 data-intro-words className="font-display text-[clamp(56px,7.6vw,148px)] leading-[0.88] font-bold tracking-[-0.045em]">
+        <h1 data-intro-words className="font-display text-[clamp(52px,min(16vw,8.4svh),72px)] leading-[0.88] font-bold tracking-[-0.045em] md:text-[clamp(56px,7.6vw,148px)]">
           <SplitWords lines={artist.tagline} />
         </h1>
 
-        <div data-intro className="mt-6 md:mt-8">
+        <div data-intro className="mt-auto md:mt-8">
           <p className="text-base md:text-lg">New single out now.</p>
           <p className="label mt-1 opacity-60">
             {latest.title} · {latest.year} · Single
@@ -166,11 +175,11 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Scroll cue: a label turning like a record around a bobbing arrow. Phones: a sticker
-          on the collage; desktop: bottom-right, lifting above the player once it docks. */}
+      {/* Scroll cue (desktop): a label turning like a record around a bobbing arrow.
+          Lifts above the player once it docks. Phones have the tab bar instead. */}
       <div
         data-intro
-        className={`absolute right-4 top-[calc(60%-176px)] transition-[bottom] duration-700 ease-out-expo md:top-auto md:right-[clamp(16px,4vw,60px)] ${hasStarted ? "md:bottom-28" : "md:bottom-6"}`}
+        className={`absolute right-[clamp(16px,4vw,60px)] hidden transition-[bottom] duration-700 ease-out-expo md:block ${hasStarted ? "bottom-28" : "bottom-6"}`}
       >
         <a
           href="#music"
