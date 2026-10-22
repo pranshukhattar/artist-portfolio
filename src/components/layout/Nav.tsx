@@ -22,6 +22,8 @@ export function Nav() {
   const menuClose = useRef<HTMLButtonElement>(null);
   const menuOpen = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
+  // Past the hero, the nav gathers into frosted pills so it reads over anything beneath it.
+  const [floating, setFloating] = useState(false);
 
   useGSAP(() => {
     // Hide on scroll down, reveal on scroll up.
@@ -34,16 +36,20 @@ export function Nav() {
       },
     });
 
-    // Switch to ink text while a paper section sits under the bar.
-    document.querySelectorAll('[data-theme="light"]').forEach((section) => {
-      ScrollTrigger.create({
-        trigger: section,
-        start: "top 40px",
-        end: "bottom 40px",
-        onToggle: (self) => bar.current?.classList.toggle("text-ink", self.isActive),
-      });
+    ScrollTrigger.create({
+      trigger: "#top",
+      start: "bottom top+=96",
+      onEnter: () => setFloating(true),
+      onLeaveBack: () => setFloating(false),
     });
   });
+
+  // The pill surfaces keep their padding in both states, so nothing shifts when they fill in.
+  const pill = `transition-[background-color,box-shadow] duration-500 ease-out-expo ${
+    floating
+      ? "bg-ink/72 shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_8px_24px_-8px_rgba(0,0,0,0.45)] ring-1 ring-paper/10 backdrop-blur-md"
+      : "bg-transparent"
+  }`;
 
   useEffect(() => {
     if (!open) return;
@@ -73,16 +79,16 @@ export function Nav() {
 
       <header
         ref={bar}
-        className="fixed inset-x-0 top-0 z-40 text-paper transition-[transform,color] duration-500 ease-out-expo"
+        className="fixed inset-x-0 top-0 z-40 text-paper transition-transform duration-500 ease-out-expo"
       >
         <div className="wrap flex h-16 items-center justify-between md:h-20">
-          <a href="#top" className="flex items-center gap-3" aria-label={`${siteConfig.name}, back to top`}>
+          <a href="#top" className={`-ml-1.5 flex h-11 items-center gap-3 rounded-full px-3.5 md:-ml-3.5 ${pill}`} aria-label={`${siteConfig.name}, back to top`}>
             <LogoMark className="h-5 w-auto" />
             <span className="label">{siteConfig.name}</span>
           </a>
 
           <nav aria-label="Primary" className="hidden md:block">
-            <ul className="flex items-center gap-8">
+            <ul className={`flex h-11 items-center gap-8 rounded-full px-6 ${pill}`}>
               {nav.map((item) => (
                 <li key={item.href}>
                   <a href={item.href} className="label relative py-2 after:absolute after:inset-x-0 after:bottom-1 after:h-px after:origin-right after:scale-x-0 after:bg-current after:transition-transform after:duration-500 after:ease-out-expo hover:after:origin-left hover:after:scale-x-100">
@@ -93,19 +99,17 @@ export function Nav() {
             </ul>
           </nav>
 
-          <div className="flex items-center gap-4">
-            <button
-              ref={menuOpen}
-              type="button"
-              onClick={() => setOpen(true)}
-              aria-expanded={open}
-              aria-controls="site-menu"
-              aria-label="Open menu"
-              className="grid size-10 place-items-center"
-            >
-              <Icon name="menu" size={26} />
-            </button>
-          </div>
+          <button
+            ref={menuOpen}
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-expanded={open}
+            aria-controls="site-menu"
+            aria-label="Open menu"
+            className={`-mr-0.5 grid size-11 place-items-center rounded-full ${pill}`}
+          >
+            <Icon name="menu" size={24} />
+          </button>
         </div>
       </header>
 
