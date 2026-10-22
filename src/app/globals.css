@@ -1,17 +1,239 @@
-:root {
-  --bg: #0b0b0b;
-  --fg: #f2efe9;
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #111111;
+  --color-ink-soft: #1c1b19;
+  --color-paper: #ede8dd;
+  --color-paper-hi: #f4f0e7;
+  --color-paper-lo: #e2dcce;
+  --color-red: #e44b3c;
+  /* Deeper red for long-form text: paper on it is ~5.4:1 (WCAG AA). */
+  --color-red-deep: #b3261e;
+  --color-orange: #f38c35;
+  --color-sand: #e0c48a;
+  --color-teal: #3a989a;
+  --color-sky: #5ba3c9;
+  --color-grey: #c7c7be;
+
+  --font-display: var(--font-space-grotesk), "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
+  --font-hand: var(--font-caveat), "Bradley Hand", cursive;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+@layer base {
+  html {
+    background: var(--color-ink);
+    -webkit-text-size-adjust: 100%;
+  }
 
-html { scroll-behavior: smooth; }
+  body {
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-body {
-  background: var(--bg);
-  color: var(--fg);
-  font-family: system-ui, sans-serif;
-  line-height: 1.5;
+  :focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--color-red);
+    color: var(--color-paper);
+  }
 }
 
-a { color: inherit; }
+@utility label {
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+@utility wrap {
+  width: 100%;
+  max-width: 1600px;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 60px);
+}
+
+/* ---------- Masked word reveal (masked-reveal skill) ----------
+   Words are visible by default (no JS). JS arms them on mount; the hero
+   pre-hides via [data-intro] so there is no flash before hydration. */
+.word-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.word {
+  display: inline-block;
+  will-change: transform;
+}
+
+[data-armed] .word,
+html.js [data-intro-words] .word {
+  transform: translateY(110%);
+}
+
+/* Hero intro elements: hidden only once JS is known to run, with a failsafe
+   that reveals them if hydration never happens. */
+html.js [data-intro] {
+  opacity: 0;
+  animation: intro-failsafe 0s linear 4s forwards;
+}
+
+html.js [data-intro-words] .word {
+  animation: intro-failsafe-words 0s linear 4s forwards;
+}
+
+@keyframes intro-failsafe {
+  to { opacity: 1; }
+}
+
+@keyframes intro-failsafe-words {
+  to { transform: none; }
+}
+
+/* ---------- Preloader ---------- */
+.preloader {
+  display: none;
+}
+
+html.js.preload .preloader {
+  display: flex;
+  animation: preloader-failsafe 0s linear 5s forwards;
+}
+
+@keyframes preloader-failsafe {
+  to { visibility: hidden; }
+}
+
+/* ---------- Spinning disc ---------- */
+.spin {
+  animation: spin var(--spin, 6s) linear infinite;
+  animation-play-state: var(--spin-state, paused);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- Tour route stops (Shows) ---------- */
+.route-stop {
+  background: var(--color-paper);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--color-ink) 35%, transparent);
+  transition: background-color 0.4s, box-shadow 0.4s;
+}
+
+.route-stop.is-passed {
+  background: var(--color-red);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-red) 18%, transparent);
+}
+
+/* ---------- Hero scroll cue ---------- */
+.scroll-cue {
+  animation: scroll-cue 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes scroll-cue {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(200%); }
+}
+
+/* ---------- Range scrubber ---------- */
+.scrubber {
+  --progress: 0%;
+  appearance: none;
+  height: 16px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.scrubber::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to right, currentColor var(--progress), color-mix(in srgb, currentColor 22%, transparent) var(--progress));
+}
+
+.scrubber::-moz-range-track {
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to right, currentColor var(--progress), color-mix(in srgb, currentColor 22%, transparent) var(--progress));
+}
+
+.scrubber::-webkit-slider-thumb {
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: currentColor;
+  transition: transform 0.15s var(--ease-out-expo);
+}
+
+.scrubber::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border: 0;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.scrubber:hover::-webkit-slider-thumb,
+.scrubber:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.3);
+}
+
+/* ---------- Progressive blur (progressive-blur skill, 4 steps) ---------- */
+.progressive-blur > div {
+  position: absolute;
+  inset: 0;
+}
+
+.progressive-blur > div:nth-child(1) {
+  backdrop-filter: blur(1px);
+  mask: linear-gradient(to bottom, transparent 0%, #000 25%, #000 50%, transparent 75%);
+}
+
+.progressive-blur > div:nth-child(2) {
+  backdrop-filter: blur(3px);
+  mask: linear-gradient(to bottom, transparent 25%, #000 50%, #000 75%, transparent 100%);
+}
+
+.progressive-blur > div:nth-child(3) {
+  backdrop-filter: blur(8px);
+  mask: linear-gradient(to bottom, transparent 50%, #000 75%, #000 100%);
+}
+
+.progressive-blur > div:nth-child(4) {
+  backdrop-filter: blur(16px);
+  mask: linear-gradient(to bottom, transparent 75%, #000 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-intro],
+  html.js [data-intro-words] .word,
+  [data-armed] .word {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .spin,
+  .scroll-cue {
+    animation: none;
+  }
+
+  html.js.preload .preloader {
+    display: none;
+  }
+}

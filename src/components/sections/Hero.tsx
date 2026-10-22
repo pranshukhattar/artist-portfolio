@@ -1,0 +1,171 @@
+"use client";
+
+import { useRef } from "react";
+import Image from "next/image";
+import hero from "../../../public/landing_page_hero.png";
+import { artist } from "@/content/artist";
+import { singles } from "@/content/music";
+import { EASE, gsap, onIntroDone, prefersReducedMotion, useGSAP } from "@/lib/motion";
+import { SplitWords } from "@/components/motion/MaskedReveal";
+import { Icon } from "@/components/ui/Icon";
+import { SocialLinks } from "@/components/ui/SocialLinks";
+import { usePlayer } from "@/components/player/PlayerProvider";
+
+// On hover the collage zooms in slightly, then leans toward the cursor. The
+// drift stays inside the margin the zoom creates, so no edge ever shows.
+const HOVER_SCALE = 1.06;
+const DRIFT = { x: 0.85, y: 0.85, copy: 8 }; // share of the zoom margin used; copy in px
+
+const latest = singles[0];
+const latestId = latest.trackIds[0];
+const singleIds = singles.map((r) => r.trackIds[0]);
+
+export function Hero() {
+  const root = useRef<HTMLElement>(null);
+  const { play, toggle, isPlaying, track, hasStarted } = usePlayer();
+  const isLatestPlaying = isPlaying && track?.id === latestId;
+
+  useGSAP(
+    () => {
+      const reduce = prefersReducedMotion();
+
+      // Intro: collage settles, headline rises word by word, details follow.
+      if (!reduce) {
+        const intro = gsap.timeline({ paused: true, defaults: { ease: EASE } });
+        intro
+          .fromTo("[data-hero-media]", { scale: 1.08 }, { scale: 1, duration: 1.8, ease: "power2.out" }, 0)
+          .fromTo("[data-intro-words] .word", { yPercent: 110, y: 0 }, { yPercent: 0, y: 0, duration: 1, stagger: 0.05 }, 0.15)
+          .fromTo("[data-intro]", { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08 }, 0.55);
+        onIntroDone(() => intro.play());
+      }
+
+      // Scroll: the collage drifts slower than the page, the copy lifts away.
+      if (!reduce) {
+        gsap.to("[data-hero-parallax]", {
+          yPercent: 14,
+          ease: "none",
+          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
+        });
+        gsap.to("[data-hero-copy]", {
+          y: -60,
+          opacity: 0.2,
+          ease: "none",
+          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
+        });
+      }
+
+      // Pointer: zoom in slightly on enter, then follow the cursor (fine pointers only).
+      if (reduce || !window.matchMedia("(pointer: fine)").matches) return;
+      const section = root.current!;
+      const follow = { duration: 1.2, ease: "power3.out" };
+      const panX = gsap.quickTo("[data-hero-pan]", "x", follow);
+      const panY = gsap.quickTo("[data-hero-pan]", "y", follow);
+      const copyX = gsap.quickTo("[data-hero-copy]", "x", follow);
+
+      const onEnter = () => gsap.to("[data-hero-pan]", { scale: HOVER_SCALE, duration: 1, ease: "power3.out", overwrite: "auto" });
+      const onMove = (e: PointerEvent) => {
+        const rect = section.getBoundingClientRect();
+        const nx = (e.clientX - rect.left) / rect.width - 0.5;
+        const ny = (e.clientY - rect.top) / rect.height - 0.5;
+        // Margin on each side created by the zoom.
+        const marginX = (rect.width * (HOVER_SCALE - 1)) / 2;
+        const marginY = (rect.height * (HOVER_SCALE - 1)) / 2;
+        panX(nx * 2 * marginX * DRIFT.x);
+        panY(ny * 2 * marginY * DRIFT.y);
+        copyX(-nx * 2 * DRIFT.copy);
+      };
+      const settle = () => {
+        gsap.to("[data-hero-pan]", { scale: 1, duration: 1, ease: "power3.out", overwrite: "auto" });
+        panX(0);
+        panY(0);
+        copyX(0);
+      };
+      const onVisibility = () => document.hidden && settle();
+
+      section.addEventListener("pointerenter", onEnter);
+      section.addEventListener("pointermove", onMove);
+      section.addEventListener("pointerleave", settle);
+      window.addEventListener("blur", settle);
+      document.addEventListener("visibilitychange", onVisibility);
+      return () => {
+        section.removeEventListener("pointerenter", onEnter);
+        section.removeEventListener("pointermove", onMove);
+        section.removeEventListener("pointerleave", settle);
+        window.removeEventListener("blur", settle);
+        document.removeEventListener("visibilitychange", onVisibility);
+      };
+    },
+    { scope: root },
+  );
+
+  return (
+    <section ref={root} id="top" aria-label="Introduction" className="relative h-[100svh] min-h-[620px] overflow-hidden bg-ink text-paper">
+      {/* Media: parallax wrapper → intro scale wrapper → hover zoom/follow layer */}
+      <div data-hero-parallax className="absolute inset-0">
+        <div data-hero-media className="absolute inset-0">
+          <div data-hero-pan className="absolute inset-0 will-change-transform">
+            <Image
+              src={hero}
+              alt="A collage of worn vinyl records and hand-lettered labels in red, black, teal and mustard"
+              fill
+              priority
+              placeholder="blur"
+              sizes="100vw"
+              className="object-cover"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Contrast: ink from the left for the headline, from the bottom for the controls. */}
+      <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(90deg,rgba(17,17,17,0.92)_0%,rgba(17,17,17,0.7)_32%,rgba(17,17,17,0)_62%)] max-md:bg-[linear-gradient(180deg,rgba(17,17,17,0.15)_0%,rgba(17,17,17,0.55)_45%,rgba(17,17,17,0.92)_100%)]" />
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-ink/75 to-transparent" />
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink/80 to-transparent" />
+
+      <div
+        data-hero-copy
+        className={`wrap relative flex h-full flex-col justify-end transition-[padding] duration-700 ease-out-expo md:justify-center md:pb-0 ${hasStarted ? "pb-[calc(200px+env(safe-area-inset-bottom))]" : "pb-[calc(140px+env(safe-area-inset-bottom))]"}`}
+      >
+        <h1 data-intro-words className="font-display text-[clamp(56px,7.6vw,148px)] leading-[0.88] font-bold tracking-[-0.045em]">
+          <SplitWords lines={artist.tagline} />
+        </h1>
+
+        <div data-intro className="mt-6 md:mt-8">
+          <p className="text-base md:text-lg">New single out now.</p>
+          <p className="label mt-1 opacity-60">
+            {latest.title} · {latest.year} · Single
+          </p>
+        </div>
+
+        <div data-intro className="mt-6 flex items-center gap-3 md:mt-8">
+          <button
+            type="button"
+            onClick={() => (track?.id === latestId ? toggle() : play(latestId, singleIds))}
+            data-cursor={isLatestPlaying ? "Pause" : "Play"}
+            className="group inline-flex h-11 items-center gap-3 rounded-full px-5 text-[11px] font-semibold tracking-[0.14em] uppercase ring-1 ring-paper/70 transition-colors duration-300 hover:bg-paper hover:text-ink"
+          >
+            <Icon name={isLatestPlaying ? "pause" : "play"} size={18} />
+            {isLatestPlaying ? "Playing" : "Listen now"}
+            <Icon name="arrowRight" size={18} className="transition-transform duration-300 ease-out-expo group-hover:translate-x-1" />
+          </button>
+        </div>
+      </div>
+
+      {/* Bottom rail: socials left, scroll cue right. Lifts above the player once it docks. */}
+      <div
+        data-intro
+        className={`absolute inset-x-0 bottom-0 transition-[padding] duration-700 ease-out-expo ${hasStarted ? "pb-[calc(140px+env(safe-area-inset-bottom))] md:pb-28" : "pb-[calc(72px+env(safe-area-inset-bottom))] md:pb-6"}`}
+      >
+        <div className="wrap flex items-center justify-between">
+          <SocialLinks only={["instagram", "youtube", "spotify"]} className="-ml-2 max-md:hidden" />
+          <a href="#music" className="label ml-auto flex items-center gap-3 opacity-80 transition-opacity hover:opacity-100">
+            Scroll
+            <span aria-hidden="true" className="relative h-10 w-px overflow-hidden bg-paper/25">
+              <span className="scroll-cue absolute inset-x-0 top-0 h-1/2 bg-paper" />
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}

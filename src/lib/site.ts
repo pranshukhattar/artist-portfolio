@@ -1,25 +1,27 @@
+// Placeholder artist name — replace once the real performing name is confirmed.
+const ARTIST_NAME = "SLOW RADIO";
+
 export const siteConfig = {
-  name: "SLOW RADIO",
-  title: "SLOW RADIO — Paper Suns",
-  description:
-    "Official site of SLOW RADIO: music, visuals, live dates and the Paper Suns release.",
+  name: ARTIST_NAME,
+  title: `${ARTIST_NAME} — Sounds for the inbetween`,
+  description: `Official site of ${ARTIST_NAME}, a music producer and live performer from Mumbai: music, videos, shows and the Fragments album.`,
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  locale: "en_US",
-  keywords: ["SLOW RADIO", "Paper Suns", "artist portfolio", "music", "live dates"],
+  locale: "en_IN",
+  timeZone: "Asia/Kolkata",
+  keywords: [ARTIST_NAME, "Fragments", "music producer", "Mumbai", "live shows", "artist portfolio"],
   // Replace with real profile URLs
   social: {
     instagram: "https://instagram.com/",
     youtube: "https://youtube.com/",
     spotify: "https://open.spotify.com/",
-    bandcamp: "https://bandcamp.com/",
+    tiktok: "https://tiktok.com/",
     soundcloud: "https://soundcloud.com/",
   },
-  // Geo / local SEO — replace with real values
   geo: {
-    region: "US-NY",
-    placename: "New York",
-    latitude: 40.7128,
-    longitude: -74.006,
+    region: "IN-MH",
+    placename: "Mumbai",
+    latitude: 19.076,
+    longitude: 72.8777,
   },
   routes: ["/"],
 };
