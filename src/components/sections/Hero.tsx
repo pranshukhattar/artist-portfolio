@@ -101,8 +101,9 @@ export function Hero() {
 
   return (
     <section ref={root} id="top" aria-label="Introduction" className="relative h-[100svh] min-h-[620px] overflow-hidden bg-ink text-paper">
-      {/* Media: parallax wrapper → intro scale wrapper → hover zoom/follow layer */}
-      <div data-hero-parallax className="absolute inset-0">
+      {/* Media: parallax wrapper → intro scale wrapper → hover zoom/follow layer.
+          Phones: the collage fills the top 60% and fades into ink; the copy sits below. */}
+      <div data-hero-parallax className="absolute inset-x-0 top-0 h-[60%] md:h-full">
         <div data-hero-media className="absolute inset-0">
           <div data-hero-pan className="absolute inset-0 will-change-transform">
             <Image
@@ -112,16 +113,18 @@ export function Hero() {
               priority
               placeholder="blur"
               sizes="100vw"
-              className="object-cover"
+              className="object-cover max-md:object-[25%_40%]"
             />
           </div>
         </div>
       </div>
 
-      {/* Contrast: ink from the left for the headline, from the bottom for the controls. */}
-      <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(90deg,rgba(17,17,17,0.92)_0%,rgba(17,17,17,0.7)_32%,rgba(17,17,17,0)_62%)] max-md:bg-[linear-gradient(180deg,rgba(17,17,17,0.15)_0%,rgba(17,17,17,0.55)_45%,rgba(17,17,17,0.92)_100%)]" />
+      {/* Contrast. Desktop: ink from the left for the headline and from the bottom for the controls.
+          Phones: the collage's lower edge melts into the ink panel. */}
+      <div aria-hidden="true" className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(17,17,17,0.92)_0%,rgba(17,17,17,0.7)_32%,rgba(17,17,17,0)_62%)] md:block" />
+      <div aria-hidden="true" className="absolute inset-x-0 top-[32%] h-[29%] bg-gradient-to-b from-transparent via-ink/75 to-ink md:hidden" />
       <div aria-hidden="true" className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-ink/75 to-transparent" />
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink/80 to-transparent" />
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 hidden h-40 bg-gradient-to-t from-ink/80 to-transparent md:block" />
 
       <div
         data-hero-copy
@@ -149,44 +152,52 @@ export function Hero() {
             {isLatestPlaying ? "Playing" : "Listen now"}
             <Icon name="arrowRight" size={18} className="transition-transform duration-300 ease-out-expo group-hover:translate-x-1" />
           </button>
+          <SocialLinks only={["instagram", "youtube", "spotify"]} className="md:hidden" />
         </div>
       </div>
 
-      {/* Bottom rail: socials left, scroll cue right. Lifts above the player once it docks. */}
+      {/* Desktop rail: socials bottom-left. Lifts above the player once it docks. */}
       <div
         data-intro
-        className={`absolute inset-x-0 bottom-0 transition-[padding] duration-700 ease-out-expo ${hasStarted ? "pb-[calc(140px+env(safe-area-inset-bottom))] md:pb-28" : "pb-[calc(72px+env(safe-area-inset-bottom))] md:pb-6"}`}
+        className={`absolute inset-x-0 bottom-0 hidden transition-[padding] duration-700 ease-out-expo md:block ${hasStarted ? "pb-28" : "pb-6"}`}
       >
-        <div className="wrap flex items-center justify-between">
-          <SocialLinks only={["instagram", "youtube", "spotify"]} className="-ml-2 max-md:hidden" />
-          {/* Scroll cue: a label turning like a record around a bobbing arrow. */}
-          <a
-            href="#music"
-            onClick={(e) => {
-              e.preventDefault();
-              scrollToHash("#music");
-            }}
-            aria-label="Scroll to the music"
-            className="group relative ml-auto grid size-[88px] place-items-center rounded-full bg-ink/50 backdrop-blur-sm md:size-[112px]"
-          >
-            <svg
-              viewBox="0 0 100 100"
-              aria-hidden="true"
-              className="spin absolute inset-0 size-full"
-              style={{ ["--spin" as string]: "16s", ["--spin-state" as string]: "running" }}
-            >
-              <path id="scroll-cue-ring" fill="none" d="M50,50 m-39,0 a39,39 0 1,1 78,0 a39,39 0 1,1 -78,0" />
-              <text className="fill-paper text-[8.5px] font-semibold uppercase">
-                <textPath href="#scroll-cue-ring" textLength={242} lengthAdjust="spacing">
-                  Scroll to listen • Scroll to listen •
-                </textPath>
-              </text>
-            </svg>
-            <span className="grid size-11 place-items-center rounded-full bg-paper text-ink transition-transform duration-500 ease-out-expo group-hover:scale-110 md:size-12">
-              <Icon name="arrowDown" size={20} className="scroll-bob" />
-            </span>
-          </a>
+        <div className="wrap">
+          <SocialLinks only={["instagram", "youtube", "spotify"]} className="-ml-2" />
         </div>
+      </div>
+
+      {/* Scroll cue: a label turning like a record around a bobbing arrow. Phones: a sticker
+          on the collage; desktop: bottom-right, lifting above the player once it docks. */}
+      <div
+        data-intro
+        className={`absolute right-4 top-[calc(60%-176px)] transition-[bottom] duration-700 ease-out-expo md:top-auto md:right-[clamp(16px,4vw,60px)] ${hasStarted ? "md:bottom-28" : "md:bottom-6"}`}
+      >
+        <a
+          href="#music"
+          onClick={(e) => {
+            e.preventDefault();
+            scrollToHash("#music");
+          }}
+          aria-label="Scroll to the music"
+          className="group relative grid size-[88px] place-items-center rounded-full bg-ink/50 backdrop-blur-sm md:size-[112px]"
+        >
+          <svg
+            viewBox="0 0 100 100"
+            aria-hidden="true"
+            className="spin absolute inset-0 size-full"
+            style={{ ["--spin" as string]: "16s", ["--spin-state" as string]: "running" }}
+          >
+            <path id="scroll-cue-ring" fill="none" d="M50,50 m-39,0 a39,39 0 1,1 78,0 a39,39 0 1,1 -78,0" />
+            <text className="fill-paper text-[8.5px] font-semibold uppercase">
+              <textPath href="#scroll-cue-ring" textLength={242} lengthAdjust="spacing">
+                Scroll to listen • Scroll to listen •
+              </textPath>
+            </text>
+          </svg>
+          <span className="grid size-11 place-items-center rounded-full bg-paper text-ink transition-transform duration-500 ease-out-expo group-hover:scale-110 md:size-12">
+            <Icon name="arrowDown" size={20} className="scroll-bob" />
+          </span>
+        </a>
       </div>
     </section>
   );

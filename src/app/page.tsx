@@ -7,6 +7,7 @@ import { Ticker } from "@/components/sections/Ticker";
 import { Music } from "@/components/sections/Music";
 import { Videos } from "@/components/sections/Videos";
 import { Journey } from "@/components/sections/Journey";
+import { Gallery } from "@/components/sections/Gallery";
 import { About } from "@/components/sections/About";
 import { Concept } from "@/components/sections/Concept";
 import { BackCover } from "@/components/sections/BackCover";
@@ -50,13 +51,14 @@ export default function Home() {
           ],
         }}
       />
-      {/* One page, told as a record: intro → the record → the pictures → the road so far → the person → back cover. */}
+      {/* One page, told as a record: intro → the record → the pictures → the road so far → snapshots → the person → back cover. */}
       <main id="main">
         <Hero />
         <Ticker />
         <Music />
         <Videos />
         <Journey />
+        <Gallery />
         <About />
         <Concept />
         <BackCover />

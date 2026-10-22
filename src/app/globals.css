@@ -245,3 +245,27 @@ html.js.preload .preloader {
     display: none;
   }
 }
+
+/* ---------- Gallery lightbox ---------- */
+.lightbox {
+  animation: lightbox-in 0.35s var(--ease-out-expo) both;
+}
+
+.lightbox-photo {
+  animation: lightbox-photo-in 0.6s var(--ease-out-expo) both;
+}
+
+@keyframes lightbox-in {
+  from { opacity: 0; }
+}
+
+@keyframes lightbox-photo-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox,
+  .lightbox-photo {
+    animation: none;
+  }
+}
