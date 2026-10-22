@@ -7,6 +7,7 @@ import { artist } from "@/content/artist";
 import { singles } from "@/content/music";
 import { EASE, gsap, onIntroDone, prefersReducedMotion, useGSAP } from "@/lib/motion";
 import { SplitWords } from "@/components/motion/MaskedReveal";
+import { SoundRoll } from "@/components/motion/SoundRoll";
 import { Icon } from "@/components/ui/Icon";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 import { usePlayer } from "@/components/player/PlayerProvider";
@@ -129,9 +130,10 @@ export function Hero() {
       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 hidden h-40 bg-gradient-to-t from-ink/80 to-transparent md:block" />
 
       {/* Phone contrast: long, soft ink washes behind the headline (top) and the call to action
-          (bottom), leaving the middle of the collage clear. No hard edges. */}
+          (bottom), leaving the middle of the collage clear. The bottom wash reaches solid ink, so
+          the hero dissolves into the next chapter with no edge. */}
       <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[52%] bg-[linear-gradient(180deg,rgba(17,17,17,0.9)_0%,rgba(17,17,17,0.72)_38%,rgba(17,17,17,0)_100%)] md:hidden" />
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[50%] bg-[linear-gradient(0deg,rgba(17,17,17,0.95)_0%,rgba(17,17,17,0.75)_40%,rgba(17,17,17,0)_100%)] md:hidden" />
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[58%] bg-[linear-gradient(0deg,rgba(17,17,17,1)_0%,rgba(17,17,17,0.94)_24%,rgba(17,17,17,0.62)_55%,rgba(17,17,17,0)_100%)] md:hidden" />
 
       {/* Phones: a poster — headline at the top, the collage through the middle, the call to action at
           the bottom. Desktop: everything centred on the left. */}
@@ -162,6 +164,11 @@ export function Hero() {
             <Icon name="arrowRight" size={18} className="transition-transform duration-300 ease-out-expo group-hover:translate-x-1" />
           </button>
           <SocialLinks only={["instagram", "youtube", "spotify"]} className="md:hidden" />
+        </div>
+
+        {/* Phones: the sound in words rolls along the bottom (desktop has it in its own section). */}
+        <div data-intro className="-mx-[clamp(16px,4vw,60px)] mt-7 md:hidden">
+          <SoundRoll media="(max-width: 767px)" size="sm" />
         </div>
       </div>
 
