@@ -1,4 +1,4 @@
-// Videos and shows from the v2 mockup. All placeholder until real data lands.
+// Videos from the v2 mockup. Placeholder until real data lands.
 import type { Crop } from "./music";
 
 export type Video = {
@@ -18,19 +18,3 @@ export const videos: Video[] = [
   { id: "sor", title: "S.O.R", kind: "Official Video", duration: "2:46", poster: { x: 33, y: 88, zoom: 3.2 } },
 ];
 
-export type Show = {
-  date: string; // ISO date
-  city: string;
-  country: string;
-  venue: string;
-  tickets?: string;
-};
-
-// Venues are the mockup's placeholders. Dates moved to 2027 so they read as upcoming.
-export const shows: Show[] = [
-  { date: "2027-06-12", city: "Ibiza", country: "ES", venue: "Ocean Beach Club" },
-  { date: "2027-06-20", city: "Amsterdam", country: "NL", venue: "Ziggo Dome" },
-  { date: "2027-07-05", city: "New York", country: "US", venue: "Brooklyn Mirage" },
-  { date: "2027-07-19", city: "Tokyo", country: "JP", venue: "Zepp DiverCity" },
-  { date: "2027-08-02", city: "São Paulo", country: "BR", venue: "Tomorrowland Brasil" },
-];

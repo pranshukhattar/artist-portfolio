@@ -14,7 +14,7 @@ const PORTRAIT = { x: 84, y: 20, zoom: 2.4 };
 const FACTS = [
   { term: "Based in", value: artist.basedIn },
   { term: "Disciplines", value: "Production · Live · Composition" },
-  { term: "Latest", value: "Fragments (2023)" },
+  { term: "Latest", value: "Summer Days (2024)" },
 ];
 
 export function About() {

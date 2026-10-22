@@ -1,5 +1,8 @@
-// Placeholder catalogue taken from the v2 mockup. Durations are the mockup's
-// listed runtimes; the audio files are generated placeholders (see credits.ts).
+// The artist's catalogue: singles only for now. Titles, years and durations are
+// from the v2 mockup; audio files are generated placeholders (see credits.ts).
+// PLACEHOLDER: notes and credits — replace with the artist's own words.
+
+import { siteConfig } from "@/lib/site";
 
 export type Platform = "spotify" | "appleMusic" | "youtube" | "soundcloud";
 
@@ -14,13 +17,18 @@ export type Track = {
   links: Partial<Record<Platform, string>>;
 };
 
+export type Credit = { role: string; name: string };
+
 export type Release = {
   id: string;
   title: string;
-  type: "single" | "album";
+  type: "single" | "ep" | "album";
   year: number;
   trackIds: string[];
   cover: Crop;
+  /** A line or two behind the song, shown on the featured sleeve. */
+  note: string;
+  credits: Credit[];
 };
 
 // Replace with per-track URLs; profile links stand in for now.
@@ -39,34 +47,58 @@ const track = (id: string, title: string, duration: string, audio?: string): Tra
 });
 
 export const tracks: Track[] = [
-  track("lost-in-static", "Lost in Static", "3:24"),
   track("summer-days", "Summer Days", "3:42", "/audio/summer-days.wav"),
   track("suburbia", "Suburbia", "3:18", "/audio/suburbia.wav"),
   track("sor", "S.O.R", "2:46", "/audio/sor.wav"),
   track("ananke", "Ananke", "4:02", "/audio/ananke.wav"),
-  track("floating-points", "Floating Points", "3:11"),
-  track("you-and-me", "You & Me", "3:56"),
-  track("last-light", "Last Light", "4:20"),
-  track("paper-planes", "Paper Planes", "3:33"),
-  track("echoes", "Echoes", "2:48"),
-  track("tides", "Tides", "3:12"),
-  track("better-days", "Better Days", "3:45"),
-  track("gravity", "Gravity", "3:28"),
-  track("fragments", "Fragments", "5:02"),
 ];
 
+const selfCredits: Credit[] = [
+  { role: "Written by", name: siteConfig.name },
+  { role: "Produced by", name: siteConfig.name },
+];
+
+// Newest first: the first release is the one the hero and the sleeve feature.
 export const releases: Release[] = [
-  { id: "summer-days", title: "Summer Days", type: "single", year: 2024, trackIds: ["summer-days"], cover: { x: 72, y: 27, zoom: 3.4 } },
-  { id: "suburbia", title: "Suburbia", type: "single", year: 2023, trackIds: ["suburbia"], cover: { x: 40, y: 45, zoom: 2.8 } },
-  { id: "sor", title: "S.O.R", type: "single", year: 2021, trackIds: ["sor"], cover: { x: 33, y: 88, zoom: 3.2 } },
-  { id: "ananke", title: "Ananke", type: "single", year: 2021, trackIds: ["ananke"], cover: { x: 8, y: 50, zoom: 2.4 } },
   {
-    id: "fragments",
-    title: "Fragments",
-    type: "album",
+    id: "summer-days",
+    title: "Summer Days",
+    type: "single",
+    year: 2024,
+    trackIds: ["summer-days"],
+    cover: { x: 72, y: 27, zoom: 3.4 },
+    note: "A song for the long, slow end of a day — warm synths, a heartbeat of a drum, and the feeling of not wanting it to finish.",
+    credits: selfCredits,
+  },
+  {
+    id: "suburbia",
+    title: "Suburbia",
+    type: "single",
     year: 2023,
-    trackIds: tracks.map((t) => t.id),
-    cover: { x: 92, y: 30, zoom: 2.4 },
+    trackIds: ["suburbia"],
+    cover: { x: 40, y: 45, zoom: 2.8 },
+    note: "About the places in between — late trains, empty streets, and the quiet that comes after the city switches off.",
+    credits: selfCredits,
+  },
+  {
+    id: "sor",
+    title: "S.O.R",
+    type: "single",
+    year: 2021,
+    trackIds: ["sor"],
+    cover: { x: 33, y: 88, zoom: 3.2 },
+    note: "Restless and fast. Built from a single loop that refused to leave, then pushed until it became a song.",
+    credits: selfCredits,
+  },
+  {
+    id: "ananke",
+    title: "Ananke",
+    type: "single",
+    year: 2021,
+    trackIds: ["ananke"],
+    cover: { x: 8, y: 50, zoom: 2.4 },
+    note: "Named for the idea of things that have to happen. Slow, wide and patient — the first song that felt like home.",
+    credits: selfCredits,
   },
 ];
 
@@ -74,9 +106,10 @@ export const singles = releases.filter((r) => r.type === "single");
 
 export const getTrack = (id: string) => tracks.find((t) => t.id === id);
 
-/** The release a track is best represented by (its single if one exists). */
-export const releaseForTrack = (id: string) =>
-  singles.find((r) => r.trackIds.includes(id)) ?? releases.find((r) => r.trackIds.includes(id))!;
+export const getRelease = (id: string) => releases.find((r) => r.id === id);
+
+/** The release a track is best represented by. */
+export const releaseForTrack = (id: string) => releases.find((r) => r.trackIds.includes(id))!;
 
 /** Tracks that can play on-site, in catalogue order. */
 export const playableTrackIds = tracks.filter((t) => t.audio).map((t) => t.id);

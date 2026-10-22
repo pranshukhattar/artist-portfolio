@@ -10,6 +10,7 @@ import { SplitWords } from "@/components/motion/MaskedReveal";
 import { Icon } from "@/components/ui/Icon";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 import { usePlayer } from "@/components/player/PlayerProvider";
+import { scrollToHash } from "@/components/layout/Nav";
 
 // On hover the collage zooms in slightly, then leans toward the cursor. The
 // drift stays inside the margin the zoom creates, so no edge ever shows.
@@ -158,10 +159,31 @@ export function Hero() {
       >
         <div className="wrap flex items-center justify-between">
           <SocialLinks only={["instagram", "youtube", "spotify"]} className="-ml-2 max-md:hidden" />
-          <a href="#music" className="label ml-auto flex items-center gap-3 opacity-80 transition-opacity hover:opacity-100">
-            Scroll
-            <span aria-hidden="true" className="relative h-10 w-px overflow-hidden bg-paper/25">
-              <span className="scroll-cue absolute inset-x-0 top-0 h-1/2 bg-paper" />
+          {/* Scroll cue: a label turning like a record around a bobbing arrow. */}
+          <a
+            href="#music"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToHash("#music");
+            }}
+            aria-label="Scroll to the music"
+            className="group relative ml-auto grid size-[88px] place-items-center rounded-full bg-ink/50 backdrop-blur-sm md:size-[112px]"
+          >
+            <svg
+              viewBox="0 0 100 100"
+              aria-hidden="true"
+              className="spin absolute inset-0 size-full"
+              style={{ ["--spin" as string]: "16s", ["--spin-state" as string]: "running" }}
+            >
+              <path id="scroll-cue-ring" fill="none" d="M50,50 m-39,0 a39,39 0 1,1 78,0 a39,39 0 1,1 -78,0" />
+              <text className="fill-paper text-[8.5px] font-semibold uppercase">
+                <textPath href="#scroll-cue-ring" textLength={242} lengthAdjust="spacing">
+                  Scroll to listen • Scroll to listen •
+                </textPath>
+              </text>
+            </svg>
+            <span className="grid size-11 place-items-center rounded-full bg-paper text-ink transition-transform duration-500 ease-out-expo group-hover:scale-110 md:size-12">
+              <Icon name="arrowDown" size={20} className="scroll-bob" />
             </span>
           </a>
         </div>

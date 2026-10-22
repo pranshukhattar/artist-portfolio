@@ -41,6 +41,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [volume, setVolumeState] = useState(0.9);
   const [muted, setMuted] = useState(false);
   const [time, setTime] = useState<PlayerTime>({ currentTime: 0, duration: 0 });
+  // The very first play opens the full player; after that it stays however the visitor left it.
+  const firstPlay = useRef(true);
 
   const track = trackId ? (getTrack(trackId) ?? null) : null;
 
@@ -52,6 +54,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       el.src = next.audio;
       setTrackId(id);
       setTime({ currentTime: 0, duration: 0 });
+    }
+    if (firstPlay.current) {
+      firstPlay.current = false;
+      setExpanded(true);
     }
     el.play().catch(() => setIsPlaying(false));
   }, [trackId]);

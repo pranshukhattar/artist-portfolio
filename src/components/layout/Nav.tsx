@@ -8,30 +8,13 @@ import { Icon } from "@/components/ui/Icon";
 import { LogoMark } from "@/components/ui/LogoMark";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 
-function useClock() {
-  const [time, setTime] = useState<string | null>(null);
-  useEffect(() => {
-    const fmt = new Intl.DateTimeFormat("en-GB", {
-      timeZone: siteConfig.timeZone,
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-    const update = () => setTime(fmt.format(new Date()));
-    update();
-    const id = setInterval(update, 1000);
-    return () => clearInterval(id);
-  }, []);
-  return time;
-}
-
 /** Smooth-scroll to an in-page anchor, falling back to native scrolling. */
-export function scrollToHash(hash: string) {
-  const target = document.querySelector(hash);
+export function scrollToHash(hash: string, offset = 0) {
+  const target = document.querySelector<HTMLElement>(hash);
   if (!target) return;
   const lenis = getLenis();
-  if (lenis) lenis.scrollTo(target as HTMLElement);
-  else target.scrollIntoView();
+  if (lenis) lenis.scrollTo(target, { offset });
+  else window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY + offset });
 }
 
 export function Nav() {
@@ -39,7 +22,6 @@ export function Nav() {
   const menuClose = useRef<HTMLButtonElement>(null);
   const menuOpen = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
-  const time = useClock();
 
   useGSAP(() => {
     // Hide on scroll down, reveal on scroll up.
@@ -112,9 +94,6 @@ export function Nav() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <span className="label hidden tabular-nums opacity-70 lg:inline" aria-label="Local time in Mumbai">
-              IST {time ?? "--:--:--"}
-            </span>
             <button
               ref={menuOpen}
               type="button"

@@ -8,15 +8,34 @@ export const artist = {
   // The prelude band between the hero and the music.
   facts: [
     { label: "New single", value: "Summer Days — out now" },
-    { label: "Album", value: "Fragments — 14 tracks" },
-    { label: "Live 2027", value: "Ibiza · Amsterdam · New York · Tokyo · São Paulo" },
+    { label: "Catalogue", value: "4 singles · 2021–2024" },
+    { label: "Based in", value: "Mumbai, India" },
   ],
+  // PLACEHOLDER: the artist's real milestones go here. Rows that point at a
+  // single play it; the last row is what's next.
+  milestones: [
+    { year: "2019", title: "Where it started", text: "First sketches and loops, made late at night between Mumbai's noise and its quiet." },
+    { year: "2021", title: "S.O.R & Ananke", text: "The first two singles go out into the world.", trackId: "sor" },
+    { year: "2022", title: "From headphones to rooms", text: "The first live sets — the songs, rebuilt for a crowd." },
+    { year: "2023", title: "Suburbia", text: "A single about the places in between.", trackId: "suburbia" },
+    { year: "2024", title: "Summer Days", text: "The newest single — out now.", trackId: "summer-days" },
+    { year: "Next", title: "More music soon", text: "New songs are in the works.", href: "#contact", upcoming: true },
+  ] as Milestone[],
+};
+
+export type Milestone = {
+  year: string;
+  title: string;
+  text: string;
+  trackId?: string;
+  href?: string;
+  upcoming?: boolean;
 };
 
 export const nav = [
   { label: "Music", href: "#music" },
   { label: "Videos", href: "#videos" },
-  { label: "Shows", href: "#shows" },
+  { label: "Journey", href: "#journey" },
   { label: "About", href: "#about" },
   { label: "Contact", href: "#contact" },
 ];

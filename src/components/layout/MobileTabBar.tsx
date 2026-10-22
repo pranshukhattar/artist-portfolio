@@ -7,7 +7,7 @@ import type { IconName } from "@/components/ui/icon-data";
 const TABS: { label: string; href: string; icon: IconName }[] = [
   { label: "Home", href: "#top", icon: "home" },
   { label: "Music", href: "#music", icon: "music" },
-  { label: "Shows", href: "#shows", icon: "calendar" },
+  { label: "Journey", href: "#journey", icon: "calendar" },
   { label: "About", href: "#about", icon: "user" },
 ];
 

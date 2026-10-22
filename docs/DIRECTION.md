@@ -2,7 +2,7 @@
 
 > Status: **approved direction, v2** (2026‑10‑23). Stages 1–6 built; stage 7 (polish) in progress. Copy and components follow mockup v2. Layout ideas also come from mockup v1.
 > Driving skill: `build-awwwards-quality-sites`. Supporting skills listed per section.
-> Artist name is a single placeholder (`src/content/artist.ts`) until confirmed. Neither "Bee Gees" (mockup v1) nor
+> Artist name: **FretByte** (`src/lib/site.ts`). Neither "Bee Gees" (mockup v1) nor
 > "Martin Garrix" (mockup v2) is used, because both are real artists.
 
 ---

@@ -49,10 +49,10 @@ export function PlayerBar() {
           <button
             type="button"
             onClick={() => setExpanded(true)}
-            aria-label="Expand player"
-            className="hidden size-9 place-items-center rounded-full opacity-70 hover:opacity-100 md:grid"
+            aria-label="Maximize player"
+            className="grid size-9 shrink-0 place-items-center rounded-full opacity-75 hover:opacity-100"
           >
-            <Icon name="chevronUp" size={22} />
+            <Icon name="maximize" size={22} />
           </button>
         </div>
       </section>

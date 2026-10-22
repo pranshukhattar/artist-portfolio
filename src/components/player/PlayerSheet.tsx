@@ -54,8 +54,8 @@ export function PlayerSheet() {
         data-lenis-prevent
       >
         <header className="flex items-center justify-between px-5 pt-[max(16px,env(safe-area-inset-top))] pb-2">
-          <button ref={closeBtn} type="button" onClick={() => setExpanded(false)} aria-label="Close player" className="grid size-10 place-items-center rounded-full opacity-80 hover:opacity-100">
-            <Icon name="chevronDown" size={26} />
+          <button ref={closeBtn} type="button" onClick={() => setExpanded(false)} aria-label="Minimize player" className="grid size-10 place-items-center rounded-full opacity-80 hover:opacity-100">
+            <Icon name="minimize" size={24} />
           </button>
           <span className="label opacity-60">Now playing</span>
           <span className="size-10" />
