@@ -11,6 +11,9 @@ export const artist = {
     { label: "Catalogue", value: "4 singles · 2021–2024" },
     { label: "Based in", value: "Mumbai, India" },
   ],
+  // The sound in words: rolls past under the hero so first-time visitors know what the music is.
+  // PLACEHOLDER: replace with the artist's own genres and moods.
+  sound: ["Electronic", "Ambient", "Guitar loops", "Late-night", "Analog textures", "Made in Mumbai"],
   // PLACEHOLDER: the artist's real milestones go here. Rows that point at a
   // single play it; the last row is what's next.
   milestones: [

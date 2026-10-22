@@ -7,10 +7,10 @@ import { gsap, prefersReducedMotion, ScrollTrigger, useGSAP } from "@/lib/motion
 import { RecordDisc } from "@/components/ui/RecordDisc";
 
 /**
- * Prelude between the hero and the music: three facts, then the release
- * titles rolling past (marquee-loop skill). The roll follows the reader —
- * faster with a quick scroll, reversing when scrolling up, leaning slightly
- * with speed — and stops when offscreen.
+ * Prelude between the hero and the music: three facts, then the sound in
+ * words rolling past (marquee-loop skill), so visitors know what the music is.
+ * The roll follows the reader — faster with a quick scroll, reversing when
+ * scrolling up, leaning slightly with speed — and stops when offscreen.
  */
 export function Ticker() {
   const root = useRef<HTMLDivElement>(null);
@@ -48,10 +48,10 @@ export function Ticker() {
     { scope: root },
   );
 
-  const titles = releases.map((r) => r.title);
+  const words = artist.sound;
 
   return (
-    <section ref={root} aria-label="Latest" className="overflow-hidden bg-ink pt-16 pb-28 text-paper md:pt-20 md:pb-36">
+    <section ref={root} aria-label="Latest and the sound" className="overflow-hidden bg-ink pt-16 pb-28 text-paper md:pt-20 md:pb-36">
       <div className="wrap">
         {/* The 1px gaps over a faint background draw the dividers between facts. */}
         <dl className="grid gap-px bg-paper/12 md:grid-cols-3">
@@ -64,21 +64,24 @@ export function Ticker() {
         </dl>
       </div>
 
-      <p className="sr-only">Releases: {titles.join(", ")}.</p>
-      <div aria-hidden="true" className="mt-14 md:mt-20 [mask-image:linear-gradient(90deg,transparent,#000_6%,#000_94%,transparent)]">
+      <p className="label wrap mt-14 flex items-center gap-3 opacity-55 md:mt-20">
+        The sound <span aria-hidden="true" className="h-px w-8 bg-current" />
+        <span className="sr-only">{words.join(", ")}</span>
+      </p>
+      <div aria-hidden="true" className="mt-6 md:mt-8 [mask-image:linear-gradient(90deg,transparent,#000_6%,#000_94%,transparent)]">
         <div data-roll className="flex w-max will-change-transform">
           {[0, 1].map((copy) => (
             <div key={copy} className="flex shrink-0 items-center">
-              {titles.map((title, i) => (
-                <Fragment key={title}>
+              {words.map((word, i) => (
+                <Fragment key={word}>
                   <span
                     className={`px-[0.35em] font-display text-[clamp(56px,9vw,148px)] leading-none font-medium tracking-[-0.045em] whitespace-nowrap ${
                       i % 2 ? "text-transparent [-webkit-text-stroke:1.5px_var(--color-paper)]" : ""
                     }`}
                   >
-                    {title}
+                    {word}
                   </span>
-                  <RecordDisc crop={releases[i].cover} spinning spin="8s" className="size-[clamp(36px,5vw,80px)] shrink-0" />
+                  <RecordDisc crop={releases[i % releases.length].cover} spinning spin="8s" className="size-[clamp(36px,5vw,80px)] shrink-0" />
                 </Fragment>
               ))}
             </div>
