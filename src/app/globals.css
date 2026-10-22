@@ -1,0 +1,17 @@
+:root {
+  --bg: #0b0b0b;
+  --fg: #f2efe9;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+a { color: inherit; }
