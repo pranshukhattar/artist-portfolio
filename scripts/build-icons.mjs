@@ -25,6 +25,10 @@ const ICONS = {
   arrowDown: ["solar", "arrow-down-linear"],
   minimize: ["solar", "minimize-square-minimalistic-linear"],
   maximize: ["solar", "maximize-square-minimalistic-linear"],
+  // Unboxed glyphs for small, ringless player buttons.
+  x: ["solar", "close-linear"],
+  expand: ["solar", "maximize-linear"],
+  collapse: ["solar", "minimize-linear"],
   home: ["solar", "home-2-linear"],
   music: ["solar", "music-note-2-linear"],
   calendar: ["solar", "calendar-linear"],

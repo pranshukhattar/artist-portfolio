@@ -65,6 +65,18 @@ export const iconData = {
     "viewBox": "0 0 24 24",
     "body": "<g fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-width=\"1.5\"><path d=\"M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z\"/><path stroke-linejoin=\"round\" d=\"M17 10V7H14M17 7L13.5 10.5M7 14V17H10M7 17L10.5 13.5\"/></g>"
   },
+  "x": {
+    "viewBox": "0 0 24 24",
+    "body": "<g fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-width=\"1.5\"><path d=\"M19.0068 5L5.00684 19\"/><path d=\"M19 19L5 5\"/></g>"
+  },
+  "expand": {
+    "viewBox": "0 0 24 24",
+    "body": "<g fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"><path d=\"M9 15L2 22M2 16.1429V22H7.85714\"/><path d=\"M15 9L22 2M22 7.85714V2H16.1429\"/></g>"
+  },
+  "collapse": {
+    "viewBox": "0 0 24 24",
+    "body": "<g fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"><path d=\"M2 22L9 15M9 20.8571V15H3.14286\"/><path d=\"M22 2L15 9M15 3.14286V9H20.8571\"/></g>"
+  },
   "home": {
     "viewBox": "0 0 24 24",
     "body": "<g fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-width=\"1.5\"><path d=\"M2 12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274C22 8.77128 22 9.91549 22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039Z\"/><path d=\"M12 15L12 18\"/></g>"

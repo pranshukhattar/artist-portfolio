@@ -37,6 +37,18 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Tailwind v4 leaves buttons on the default arrow; everything clickable gets the hand. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  label[for],
+  select,
+  summary,
+  input[type="range"]:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    cursor: pointer;
+  }
+
   :focus-visible {
     outline: 2px solid var(--color-red);
     outline-offset: 3px;
@@ -125,6 +137,21 @@ html.js.preload .preloader {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* ---------- Now-playing bars ---------- */
+.eq > span {
+  transform-origin: bottom;
+  animation: eq 0.9s ease-in-out infinite alternate;
+  animation-play-state: var(--eq-state, paused);
+}
+
+.eq > span:nth-child(2) { animation-delay: -0.3s; }
+.eq > span:nth-child(3) { animation-delay: -0.6s; }
+
+@keyframes eq {
+  from { transform: scaleY(0.3); }
+  to { transform: scaleY(1); }
 }
 
 /* ---------- Route stops (The road so far) ---------- */
@@ -237,6 +264,7 @@ html.js.preload .preloader {
   }
 
   .spin,
+  .eq > span,
   .scroll-bob {
     animation: none;
   }

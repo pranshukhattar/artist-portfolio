@@ -1,6 +1,6 @@
 // The artist's catalogue: singles only for now. Titles, years and durations are
 // from the v2 mockup; audio files are generated placeholders (see credits.ts).
-// PLACEHOLDER: notes and credits — replace with the artist's own words.
+// PLACEHOLDER: genres, notes and credits — replace with the artist's own words.
 
 import { siteConfig } from "@/lib/site";
 
@@ -13,6 +13,7 @@ export type Track = {
   id: string;
   title: string;
   duration: string;
+  genre: string;
   audio?: string;
   links: Partial<Record<Platform, string>>;
 };
@@ -38,19 +39,21 @@ const links = {
   youtube: "https://youtube.com/",
 };
 
-const track = (id: string, title: string, duration: string, audio?: string): Track => ({
+const track = (id: string, title: string, duration: string, genre: string, audio?: string): Track => ({
   id,
   title,
   duration,
+  genre,
   audio,
   links,
 });
 
 export const tracks: Track[] = [
-  track("summer-days", "Summer Days", "3:42", "/audio/summer-days.wav"),
-  track("suburbia", "Suburbia", "3:18", "/audio/suburbia.wav"),
-  track("sor", "S.O.R", "2:46", "/audio/sor.wav"),
-  track("ananke", "Ananke", "4:02", "/audio/ananke.wav"),
+  // PLACEHOLDER genres, guessed from the song notes below.
+  track("summer-days", "Summer Days", "3:42", "Synth-pop", "/audio/summer-days.wav"),
+  track("suburbia", "Suburbia", "3:18", "Indie electronic", "/audio/suburbia.wav"),
+  track("sor", "S.O.R", "2:46", "Electronic", "/audio/sor.wav"),
+  track("ananke", "Ananke", "4:02", "Ambient", "/audio/ananke.wav"),
 ];
 
 const selfCredits: Credit[] = [

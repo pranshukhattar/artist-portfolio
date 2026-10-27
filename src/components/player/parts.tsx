@@ -11,6 +11,21 @@ export function Disc({ track, spinning, className = "" }: { track: Track; spinni
   return <RecordDisc crop={releaseForTrack(track.id).cover} spinning={spinning} className={className} />;
 }
 
+/** Ghost icon button used across the player chrome. */
+export const ghostButton =
+  "grid shrink-0 place-items-center rounded-full text-paper/70 transition-[background-color,color] duration-200 hover:bg-paper/10 hover:text-paper focus-visible:bg-paper/10 focus-visible:text-paper";
+
+/** Three bouncing bars marking the track that's playing; they freeze when paused. */
+export function Equalizer({ playing, className = "h-3" }: { playing: boolean; className?: string }) {
+  return (
+    <span aria-hidden="true" className={`eq flex items-end gap-[2px] ${className}`} style={{ "--eq-state": playing ? "running" : "paused" } as CSSProperties}>
+      <span className="h-full w-[3px] rounded-full bg-current" />
+      <span className="h-full w-[3px] rounded-full bg-current" />
+      <span className="h-full w-[3px] rounded-full bg-current" />
+    </span>
+  );
+}
+
 export function Transport({ size = "sm" }: { size?: "sm" | "lg" }) {
   const { isPlaying, toggle, next, prev, track } = usePlayer();
   const big = size === "lg";

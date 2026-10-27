@@ -1,61 +1,82 @@
 "use client";
 
 import { siteConfig } from "@/lib/site";
+import { releaseForTrack } from "@/content/music";
+import { Cover } from "@/components/ui/Cover";
 import { Icon } from "@/components/ui/Icon";
-import { usePlayer } from "./PlayerProvider";
-import { Disc, Scrubber, Transport, Volume } from "./parts";
+import { usePlayer, usePlayerTime } from "./PlayerProvider";
+import { Equalizer, ghostButton } from "./parts";
 
-/** Compact now-playing bar. Slides in after the first play. */
+/** Hairline progress along the bottom edge of the mini player. */
+function Progress() {
+  const { currentTime, duration } = usePlayerTime();
+  const progress = duration ? (currentTime / duration) * 100 : 0;
+  return (
+    <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[2px] bg-paper/10">
+      <span className="block h-full bg-red" style={{ width: `${progress}%` }} />
+    </span>
+  );
+}
+
+/** Mini player: a small floating card in the bottom-right corner. Pops in after the first play. */
 export function PlayerBar() {
-  const { track, hasStarted, isPlaying, expanded, setExpanded } = usePlayer();
+  const { track, hasStarted, isPlaying, toggle, next, close, expanded, setExpanded } = usePlayer();
   const visible = hasStarted && !expanded;
 
   return (
-    <>
-      {/* Content softens as it passes under the bar. */}
-      <div
-        aria-hidden="true"
-        className={`progressive-blur pointer-events-none fixed inset-x-0 bottom-0 z-30 h-36 transition-opacity duration-500 ${visible ? "opacity-100" : "opacity-0"}`}
-      >
-        <div /><div /><div /><div />
-      </div>
-
-      <section
-        aria-label="Music player"
-        inert={!visible}
-        className={`fixed inset-x-3 bottom-[calc(68px+env(safe-area-inset-bottom))] z-40 transition-transform duration-700 ease-out-expo md:inset-x-auto md:bottom-5 md:left-1/2 md:w-[min(920px,calc(100vw-40px))] md:-translate-x-1/2 ${visible ? "translate-y-0" : "translate-y-[calc(100%+120px)]"}`}
-      >
-        <div className="flex items-center gap-3 rounded-2xl bg-ink/95 py-2 pr-2 pl-2 text-paper shadow-[0_1px_1px_rgba(0,0,0,0.25),0_8px_16px_-4px_rgba(0,0,0,0.3),0_24px_48px_-12px_rgba(0,0,0,0.45)] ring-1 ring-paper/10 md:gap-5 md:pr-3">
-          {track && (
-            <button
-              type="button"
-              onClick={() => setExpanded(true)}
-              className="flex min-w-0 flex-1 items-center gap-3 text-left md:flex-none md:w-56"
-              aria-label={`Open player: ${track.title}`}
-            >
-              <Disc track={track} spinning={isPlaying} className="size-11 shrink-0" />
-              <span className="min-w-0">
-                <span className="block truncate font-display text-sm font-medium tracking-[-0.01em]">{track.title}</span>
-                <span className="block truncate text-xs opacity-60">{siteConfig.name}</span>
-              </span>
-            </button>
-          )}
-
-          <Transport />
-          <Scrubber className="hidden flex-1 md:flex" />
-          <div className="hidden lg:block">
-            <Volume />
-          </div>
+    <section
+      aria-label="Music player"
+      inert={!visible}
+      className={`fixed right-3 bottom-[calc(68px+env(safe-area-inset-bottom))] z-40 origin-bottom-right transition-[transform,opacity] duration-500 ease-out-expo md:right-5 md:bottom-5 ${visible ? "translate-y-0 scale-100 opacity-100" : "translate-y-4 scale-95 opacity-0"}`}
+    >
+      <div className="relative flex w-[min(340px,calc(100vw-24px))] items-center gap-1 overflow-hidden rounded-2xl bg-ink/92 p-2 text-paper shadow-[0_1px_1px_rgba(0,0,0,0.25),0_8px_16px_-4px_rgba(0,0,0,0.3),0_24px_48px_-12px_rgba(0,0,0,0.45)] ring-1 ring-paper/10 backdrop-blur-md">
+        {track && (
           <button
             type="button"
             onClick={() => setExpanded(true)}
-            aria-label="Maximize player"
-            className="grid size-9 shrink-0 place-items-center rounded-full opacity-75 hover:opacity-100"
+            className="group/open flex min-w-0 flex-1 items-center gap-3 rounded-xl pr-2 text-left"
+            aria-label={`Open player: ${track.title}`}
           >
-            <Icon name="maximize" size={22} />
+            <span className="relative size-11 shrink-0 overflow-hidden rounded-lg ring-1 ring-paper/10">
+              <Cover crop={releaseForTrack(track.id).cover} alt="" className="size-full transition-transform duration-500 ease-out-expo group-hover/open:scale-110" />
+              {/* Bars over the artwork while playing, on a soft scrim so they read on any cover. */}
+              <span
+                aria-hidden="true"
+                className={`absolute inset-0 grid place-items-center bg-ink/45 transition-opacity duration-300 ${isPlaying ? "opacity-100" : "opacity-0"}`}
+              >
+                <Equalizer playing={isPlaying} className="h-4 text-paper" />
+              </span>
+            </span>
+            <span className="min-w-0">
+              <span className="block truncate font-display text-[13px] leading-tight font-medium tracking-[-0.01em]">{track.title}</span>
+              <span className="block truncate text-[11px] opacity-55">{siteConfig.name}</span>
+            </span>
           </button>
-        </div>
-      </section>
-    </>
+        )}
+
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={track ? `${isPlaying ? "Pause" : "Play"} ${track.title}` : "Play"}
+          className="grid size-9 shrink-0 place-items-center rounded-full bg-paper text-ink transition-transform duration-200 ease-out-expo hover:scale-105 active:scale-95"
+        >
+          <Icon name={isPlaying ? "pause" : "play"} size={16} />
+        </button>
+        <button type="button" onClick={next} aria-label="Next track" className={`${ghostButton} size-9`}>
+          <Icon name="next" size={18} />
+        </button>
+
+        <span aria-hidden="true" className="mx-1 h-6 w-px shrink-0 bg-paper/15" />
+
+        <button type="button" onClick={() => setExpanded(true)} aria-label="Expand player" className={`${ghostButton} size-8`}>
+          <Icon name="expand" size={16} />
+        </button>
+        <button type="button" onClick={close} aria-label="Close player and stop music" className={`${ghostButton} size-8`}>
+          <Icon name="x" size={18} />
+        </button>
+
+        <Progress />
+      </div>
+    </section>
   );
 }

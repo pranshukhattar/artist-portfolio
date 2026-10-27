@@ -19,6 +19,8 @@ type PlayerActions = {
   play: (trackId: string, queue?: string[]) => void;
   toggle: () => void;
   pause: () => void;
+  /** Stop playback and dismiss the player entirely. */
+  close: () => void;
   next: () => void;
   prev: () => void;
   seek: (seconds: number) => void;
@@ -101,6 +103,19 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   const pause = useCallback(() => audio.current?.pause(), []);
 
+  const close = useCallback(() => {
+    const el = audio.current;
+    if (el) {
+      el.pause();
+      el.removeAttribute("src");
+      el.load();
+    }
+    setTrackId(null);
+    setExpanded(false);
+    setIsPlaying(false);
+    setTime({ currentTime: 0, duration: 0 });
+  }, []);
+
   const seek = useCallback((seconds: number) => {
     if (audio.current) audio.current.currentTime = seconds;
     setTime((t) => ({ ...t, currentTime: seconds }));
@@ -155,6 +170,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       play,
       toggle,
       pause,
+      close,
       next,
       prev,
       seek,
@@ -162,7 +178,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       toggleMute,
       setExpanded,
     }),
-    [track, queue, isPlaying, expanded, volume, muted, play, toggle, pause, next, prev, seek, setVolume, toggleMute],
+    [track, queue, isPlaying, expanded, volume, muted, play, toggle, pause, close, next, prev, seek, setVolume, toggleMute],
   );
 
   return (

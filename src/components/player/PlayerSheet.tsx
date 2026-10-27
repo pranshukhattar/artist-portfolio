@@ -7,7 +7,7 @@ import { Cover } from "@/components/ui/Cover";
 import { Icon } from "@/components/ui/Icon";
 import { getTrack, releaseForTrack, type Platform } from "@/content/music";
 import { usePlayer } from "./PlayerProvider";
-import { Disc, Scrubber, Transport, Volume } from "./parts";
+import { Disc, Equalizer, Scrubber, Transport, Volume, ghostButton } from "./parts";
 
 const PLATFORM_LABEL: Record<Platform, string> = {
   spotify: "Spotify",
@@ -18,7 +18,7 @@ const PLATFORM_LABEL: Record<Platform, string> = {
 
 /** Expanded player: full screen on phones, side panel on desktop. */
 export function PlayerSheet() {
-  const { track, expanded, setExpanded, isPlaying, queue, play } = usePlayer();
+  const { track, expanded, setExpanded, close, isPlaying, queue, play } = usePlayer();
   const closeBtn = useRef<HTMLButtonElement>(null);
   const opener = useRef<Element | null>(null);
 
@@ -39,6 +39,9 @@ export function PlayerSheet() {
   if (!track) return null;
   const release = releaseForTrack(track.id);
 
+  const position = queue.indexOf(track.id) + 1;
+  const links = Object.entries(track.links) as [Platform, string][];
+
   return (
     <div className={`fixed inset-0 z-50 ${expanded ? "" : "pointer-events-none"}`} inert={!expanded}>
       <div
@@ -50,84 +53,106 @@ export function PlayerSheet() {
         role="dialog"
         aria-modal="true"
         aria-label="Now playing"
-        className={`absolute inset-0 flex flex-col overflow-y-auto overscroll-contain bg-ink text-paper transition-transform duration-700 ease-out-expo md:inset-y-3 md:right-3 md:left-auto md:w-[440px] md:rounded-2xl md:ring-1 md:ring-paper/10 ${expanded ? "translate-y-0 md:translate-x-0" : "translate-y-full md:translate-x-[calc(100%+24px)] md:translate-y-0"}`}
+        className={`absolute inset-0 flex flex-col overflow-hidden bg-ink text-paper transition-transform duration-700 ease-out-expo md:top-auto md:right-3 md:bottom-3 md:left-auto md:max-h-[calc(100svh-24px)] md:w-[420px] md:rounded-3xl md:shadow-[0_24px_64px_-16px_rgba(0,0,0,0.6)] md:ring-1 md:ring-paper/10 ${expanded ? "translate-y-0 md:translate-x-0" : "translate-y-full md:translate-x-[calc(100%+24px)] md:translate-y-0"}`}
         data-lenis-prevent
       >
-        <header className="flex items-center justify-between px-5 pt-[max(16px,env(safe-area-inset-top))] pb-2">
-          <button ref={closeBtn} type="button" onClick={() => setExpanded(false)} aria-label="Minimize player" className="grid size-10 place-items-center rounded-full opacity-80 hover:opacity-100">
-            <Icon name="minimize" size={24} />
+        <header className="flex shrink-0 items-center justify-between px-3 pt-[max(12px,env(safe-area-inset-top))] pb-1">
+          <button ref={closeBtn} type="button" onClick={() => setExpanded(false)} aria-label="Minimize player" className={`${ghostButton} size-10`}>
+            <Icon name="chevronDown" size={22} className="md:hidden" />
+            <Icon name="collapse" size={18} className="hidden md:block" />
           </button>
-          <span className="label opacity-60">Now playing</span>
-          <span className="size-10" />
+          <span className="label opacity-55">Now playing</span>
+          <button type="button" onClick={close} aria-label="Close player and stop music" className={`${ghostButton} size-10`}>
+            <Icon name="x" size={20} />
+          </button>
         </header>
 
-        <div className="px-6">
-          <div className="relative mx-auto aspect-square w-full max-w-[340px]">
-            <div className="absolute inset-[6%] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.6)]">
-              <Cover crop={release.cover} alt={`${release.title} cover`} className="size-full rounded-sm" />
+        <div className="shrink-0 px-6">
+          {/* The sleeve with its record sliding out; it scales with screen height and drops away on short screens. */}
+          <div className="relative mx-auto mt-3 aspect-square w-[min(64%,260px,24svh)] -translate-x-[9%] [@media(max-height:740px)]:hidden">
+            <Disc
+              track={track}
+              spinning={isPlaying}
+              className={`absolute inset-[5%] ring-1 ring-paper/15 transition-transform duration-700 ease-out-expo ${isPlaying ? "translate-x-[30%]" : "translate-x-[16%]"}`}
+            />
+            <div className="absolute inset-0 overflow-hidden rounded-md shadow-[0_2px_4px_rgba(0,0,0,0.3),0_24px_48px_-12px_rgba(0,0,0,0.7)] ring-1 ring-paper/10">
+              <Cover crop={release.cover} alt={`${release.title} cover`} className="size-full" />
             </div>
-            <Disc track={track} spinning={isPlaying} className={`absolute -bottom-3 -right-3 size-[42%] ring-4 ring-ink transition-transform duration-700 ease-out-expo ${isPlaying ? "translate-x-2" : ""}`} />
           </div>
 
-          <div className="mt-8 text-center">
-            <h2 className="font-display text-3xl font-medium tracking-[-0.03em]">{track.title}</h2>
-            <p className="mt-1 text-sm opacity-60">
-              {siteConfig.name} · {release.title}
-            </p>
+          <div className="mt-7 flex items-center gap-3 [@media(max-height:740px)]:mt-2">
+            <span className="hidden size-12 shrink-0 overflow-hidden rounded-md ring-1 ring-paper/10 [@media(max-height:740px)]:block">
+              <Cover crop={release.cover} alt="" className="size-full" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <h2 className="truncate font-display text-2xl leading-tight font-medium tracking-[-0.03em]">{track.title}</h2>
+              <p className="label mt-1 truncate text-red">{track.genre}</p>
+              <p className="mt-1 truncate text-sm opacity-55">
+                {siteConfig.name} · {release.title}
+              </p>
+            </div>
+            {links.length > 0 && (
+              <ul className="flex shrink-0 items-center" aria-label="Listen on">
+                {links.map(([platform, href]) => (
+                  <li key={platform}>
+                    <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${PLATFORM_LABEL[platform]}`} title={PLATFORM_LABEL[platform]} className={`${ghostButton} size-9`}>
+                      <Icon name={platform} size={16} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
-          <Scrubber className="mt-8" />
-          <div className="mt-4 flex justify-center">
+          <Scrubber className="mt-4" />
+          <div className="mt-2 flex justify-center">
             <Transport size="lg" />
           </div>
-          <div className="mt-4 hidden justify-center md:flex">
+          <div className="mt-3 hidden justify-center md:flex [@media(max-height:760px)]:md:hidden">
             <Volume />
           </div>
-
-          <div className="mt-8">
-            <p className="label opacity-50">Listen on</p>
-            <ul className="mt-3 flex flex-wrap gap-2">
-              {(Object.entries(track.links) as [Platform, string][]).map(([platform, href]) => (
-                <li key={platform}>
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs ring-1 ring-paper/20 transition-colors hover:bg-paper hover:text-ink"
-                  >
-                    <Icon name={platform} size={18} />
-                    {PLATFORM_LABEL[platform]}
-                    <Icon name="arrowUpRight" size={16} />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mt-8 pb-[max(24px,env(safe-area-inset-bottom))]">
-            <p className="label opacity-50">Queue</p>
-            <ol className="mt-2 divide-y divide-paper/10">
-              {queue.map((id, i) => {
-                const item = getTrack(id)!;
-                const current = id === track.id;
-                return (
-                  <li key={id}>
-                    <button
-                      type="button"
-                      onClick={() => play(id)}
-                      aria-current={current ? "true" : undefined}
-                      className={`flex w-full items-center gap-4 py-3 text-left text-sm transition-opacity ${current ? "opacity-100" : "opacity-60 hover:opacity-100"}`}
-                    >
-                      <span className="w-5 text-[11px] tabular-nums opacity-60">{String(i + 1).padStart(2, "0")}</span>
-                      <span className={`flex-1 ${current ? "text-red" : ""}`}>{item.title}</span>
-                      <span className="text-[11px] tabular-nums opacity-60">{item.duration}</span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ol>
-          </div>
         </div>
+
+        {/* Phones: pushes the queue down to the thumb. The desktop panel is sized to its content, so this collapses. */}
+        <div aria-hidden="true" className="min-h-5 flex-1" />
+
+        {/* Fits up to four rows exactly; a longer queue scrolls on its own while the rest of the player stays put. */}
+        <section aria-label="Queue" className="flex min-h-0 shrink flex-col border-t border-paper/10 pb-[max(12px,env(safe-area-inset-bottom))]">
+          <div className="flex shrink-0 items-center justify-between px-6 pt-3 pb-2">
+            <p className="label opacity-55">Up next</p>
+            <p className="label tabular-nums opacity-40">
+              {position} / {queue.length}
+            </p>
+          </div>
+          <ol className="max-h-[224px] min-h-0 overflow-y-auto overscroll-contain px-3 [scrollbar-color:rgb(237_232_221/0.2)_transparent] [scrollbar-width:thin]">
+            {queue.map((id, i) => {
+              const item = getTrack(id)!;
+              const current = id === track.id;
+              return (
+                <li key={id}>
+                  <button
+                    type="button"
+                    onClick={() => play(id)}
+                    aria-current={current ? "true" : undefined}
+                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition-colors ${current ? "bg-paper/[0.07]" : "hover:bg-paper/[0.04]"}`}
+                  >
+                    <span className="grid w-4 shrink-0 place-items-center text-[11px] tabular-nums">
+                      {current ? <Equalizer playing={isPlaying} className="h-3 text-red" /> : <span className="opacity-50">{i + 1}</span>}
+                    </span>
+                    <span className="size-10 shrink-0 overflow-hidden rounded-md">
+                      <Cover crop={releaseForTrack(id).cover} alt="" className="size-full" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className={`block truncate text-sm font-medium ${current ? "text-red" : ""}`}>{item.title}</span>
+                      <span className="block truncate text-xs opacity-50">{item.genre}</span>
+                    </span>
+                    <span className="shrink-0 text-[11px] tabular-nums opacity-50">{item.duration}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
       </div>
     </div>
   );
