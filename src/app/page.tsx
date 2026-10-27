@@ -32,6 +32,7 @@ export default function Home() {
               name: siteConfig.name,
               url: siteConfig.url,
               sameAs: Object.values(siteConfig.social),
+              member: { "@type": "Person", name: siteConfig.person },
               location: {
                 "@type": "Place",
                 name: siteConfig.geo.placename,
@@ -50,15 +51,15 @@ export default function Home() {
           ],
         }}
       />
-      {/* One page, told as a record: intro → the record → the pictures → the road so far → snapshots → the person → back cover. */}
+      {/* One page, told as a record: intro → the record → the pictures → the person (and snapshots) → the road so far → back cover. */}
       <main id="main">
         <Hero />
         <Ticker />
         <Music />
         <Videos />
-        <Journey />
-        <Gallery />
         <About />
+        <Gallery />
+        <Journey />
         <BackCover />
       </main>
       <ChapterRail />

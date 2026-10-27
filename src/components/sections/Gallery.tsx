@@ -137,9 +137,9 @@ export function Gallery() {
     <Chapter
       id="gallery"
       theme="dark"
-      chapter="03 — The road so far"
+      chapter="03 — The person"
       label="Gallery"
-      className="pt-24 pb-28 md:pt-0 md:pb-0"
+      className="pt-20 pb-20 md:pt-0 md:pb-0"
     >
       <div ref={root} className="group">
         {/* Intro for the swipe row (the pinned strip carries its own). */}
@@ -151,7 +151,7 @@ export function Gallery() {
           <div className="group-data-[pinned]:sticky group-data-[pinned]:top-0 group-data-[pinned]:flex group-data-[pinned]:h-[100svh] group-data-[pinned]:items-center group-data-[pinned]:overflow-hidden">
             <ul
               data-track
-              className="mt-12 flex snap-x snap-mandatory items-center gap-5 overflow-x-auto px-[clamp(16px,4vw,60px)] pt-4 pb-10 [scrollbar-width:none] group-data-[pinned]:mt-0 group-data-[pinned]:w-max group-data-[pinned]:snap-none group-data-[pinned]:gap-14 group-data-[pinned]:overflow-visible group-data-[pinned]:py-0 [&::-webkit-scrollbar]:hidden"
+              className="mt-8 flex snap-x snap-mandatory items-center gap-5 overflow-x-auto px-[clamp(16px,4vw,60px)] pt-4 pb-10 [scrollbar-width:none] group-data-[pinned]:mt-0 group-data-[pinned]:w-max group-data-[pinned]:snap-none group-data-[pinned]:gap-14 group-data-[pinned]:overflow-visible group-data-[pinned]:py-0 [&::-webkit-scrollbar]:hidden"
             >
               <li className="hidden w-[34vw] shrink-0 pr-[4vw] group-data-[pinned]:block">
                 <Intro />
@@ -220,9 +220,9 @@ function Intro() {
     <ChapterTitle index="03" story="Snapshots">
       <MaskedReveal
         lines={["Snapshots", "from the road"]}
-        className="mt-4 font-display text-[clamp(48px,6vw,104px)] leading-[0.88] font-medium tracking-[-0.045em]"
+        className="mt-4 font-display text-[clamp(40px,4.4vw,72px)] leading-[0.88] font-medium tracking-[-0.045em]"
       />
-      <p className="mt-6 max-w-sm text-lg opacity-75">{intro}</p>
+      <p className="mt-5 max-w-sm text-base opacity-75 md:text-lg">{intro}</p>
     </ChapterTitle>
   );
 }
@@ -349,16 +349,17 @@ function Lightbox({
           aria-label="Close photo viewer"
           className="grid size-11 place-items-center rounded-full ring-1 ring-paper/30 hover:bg-paper hover:text-ink"
         >
-          <Icon name="close" size={22} />
+          <Icon name="x" size={20} />
         </button>
       </div>
 
-      <div className="flex min-h-0 flex-1 items-center justify-center gap-4 px-4 md:gap-8">
+      {/* Desktop arrows are pinned to the screen edges so they stay put whatever the photo's shape. */}
+      <div className="relative flex min-h-0 flex-1 items-center justify-center px-4">
         <button
           type="button"
           onClick={() => go(-1)}
           aria-label="Previous photo"
-          className="hidden size-12 shrink-0 place-items-center rounded-full ring-1 ring-paper/30 hover:bg-paper hover:text-ink md:grid"
+          className="absolute top-1/2 left-[clamp(16px,4vw,60px)] z-10 hidden size-12 -translate-y-1/2 place-items-center rounded-full ring-1 ring-paper/30 transition-colors hover:bg-paper hover:text-ink md:grid"
         >
           <Icon name="arrowLeft" size={22} />
         </button>
@@ -367,10 +368,10 @@ function Lightbox({
           className="lightbox-photo flex flex-col items-center"
         >
           <div
-            className="relative overflow-hidden bg-ink-soft"
+            className="relative overflow-hidden bg-ink-soft [--lb-max:88vw] md:[--lb-max:calc(100vw-280px)]"
             style={{
               aspectRatio: ratio,
-              width: `min(88vw, calc(68svh * ${ratio}))`,
+              width: `min(var(--lb-max), calc(68svh * ${ratio}))`,
             }}
           >
             <PhotoImage photo={photo} sizes="90vw" />
@@ -384,7 +385,7 @@ function Lightbox({
           type="button"
           onClick={() => go(1)}
           aria-label="Next photo"
-          className="hidden size-12 shrink-0 place-items-center rounded-full ring-1 ring-paper/30 hover:bg-paper hover:text-ink md:grid"
+          className="absolute top-1/2 right-[clamp(16px,4vw,60px)] z-10 hidden size-12 -translate-y-1/2 place-items-center rounded-full ring-1 ring-paper/30 transition-colors hover:bg-paper hover:text-ink md:grid"
         >
           <Icon name="arrowRight" size={22} />
         </button>

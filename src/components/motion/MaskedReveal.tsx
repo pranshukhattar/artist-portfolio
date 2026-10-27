@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ElementType } from "react";
+import { Fragment, useRef, type ElementType } from "react";
 import { EASE, gsap, prefersReducedMotion, useGSAP } from "@/lib/motion";
 
 type Props = {
@@ -53,11 +53,14 @@ export function SplitWords({ lines }: { lines: string[] }) {
       <span className="sr-only">{lines.join(" ")}</span>
       {lines.map((line, i) => (
         <span key={i} className="block" aria-hidden="true">
+          {/* The space sits between masks, never inside one, so it can't be clipped or drift to the wrong side. */}
           {line.split(" ").map((word, j) => (
-            <span key={j} className="word-mask">
-              <span className="word">{word}</span>
-              {j < line.split(" ").length - 1 ? " " : null}
-            </span>
+            <Fragment key={j}>
+              {j > 0 && " "}
+              <span className="word-mask">
+                <span className="word">{word}</span>
+              </span>
+            </Fragment>
           ))}
         </span>
       ))}

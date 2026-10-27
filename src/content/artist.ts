@@ -5,6 +5,7 @@ export const artist = {
   about:
     "Music has always been a way for me to make sense of the noise. This project is a collection of moments, sounds and emotions — not a fixed identity, but a constant search.",
   basedIn: "Mumbai, India",
+  disciplines: ["Production", "Live", "Composition"],
   // The prelude band between the hero and the music.
   facts: [
     { label: "New single", value: "Summer Days — out now" },
@@ -15,14 +16,14 @@ export const artist = {
   // PLACEHOLDER: replace with the artist's own genres and moods.
   sound: ["Electronic", "Ambient", "Guitar loops", "Late-night", "Analog textures", "Made in Mumbai"],
   // PLACEHOLDER: the artist's real milestones go here. Rows that point at a
-  // single play it; the last row is what's next.
+  // single play it; the last row is what's next (the back cover right below has the mailing list).
   milestones: [
     { year: "2019", title: "Where it started", text: "First sketches and loops, made late at night between Mumbai's noise and its quiet." },
     { year: "2021", title: "S.O.R & Ananke", text: "The first two singles go out into the world.", trackId: "sor" },
     { year: "2022", title: "From headphones to rooms", text: "The first live sets — the songs, rebuilt for a crowd." },
     { year: "2023", title: "Suburbia", text: "A single about the places in between.", trackId: "suburbia" },
     { year: "2024", title: "Summer Days", text: "The newest single — out now.", trackId: "summer-days" },
-    { year: "Next", title: "More music soon", text: "New songs are in the works.", href: "#contact", upcoming: true },
+    { year: "Next", title: "More music soon", text: "New songs are in the works.", upcoming: true },
   ] as Milestone[],
 };
 
@@ -31,14 +32,13 @@ export type Milestone = {
   title: string;
   text: string;
   trackId?: string;
-  href?: string;
   upcoming?: boolean;
 };
 
 export const nav = [
   { label: "Music", href: "#music" },
   { label: "Videos", href: "#videos" },
-  { label: "Journey", href: "#journey" },
   { label: "About", href: "#about" },
+  { label: "Journey", href: "#journey" },
   { label: "Contact", href: "#contact" },
 ];
