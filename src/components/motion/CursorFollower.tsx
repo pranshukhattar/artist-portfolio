@@ -29,10 +29,11 @@ export function CursorFollower() {
 
   useEffect(() => {
     if (!enabled || !ring.current || !dot.current) return;
-    const ringX = gsap.quickTo(ring.current, "x", { duration: 0.55, ease: "power3.out" });
-    const ringY = gsap.quickTo(ring.current, "y", { duration: 0.55, ease: "power3.out" });
-    const dotX = gsap.quickTo(dot.current, "x", { duration: 0.12, ease: "power2.out" });
-    const dotY = gsap.quickTo(dot.current, "y", { duration: 0.12, ease: "power2.out" });
+    // A short trail on the ring keeps it alive without feeling laggy; the dot is near-instant.
+    const ringX = gsap.quickTo(ring.current, "x", { duration: 0.25, ease: "power3.out" });
+    const ringY = gsap.quickTo(ring.current, "y", { duration: 0.25, ease: "power3.out" });
+    const dotX = gsap.quickTo(dot.current, "x", { duration: 0.04, ease: "power2.out" });
+    const dotY = gsap.quickTo(dot.current, "y", { duration: 0.04, ease: "power2.out" });
 
     const onMove = (e: PointerEvent) => {
       ringX(e.clientX);
