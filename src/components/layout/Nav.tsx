@@ -18,7 +18,6 @@ export function scrollToHash(hash: string, offset = 0) {
 }
 
 export function Nav() {
-  const bar = useRef<HTMLElement>(null);
   const menuClose = useRef<HTMLButtonElement>(null);
   const menuOpen = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
@@ -26,16 +25,6 @@ export function Nav() {
   const [floating, setFloating] = useState(false);
 
   useGSAP(() => {
-    // Hide on scroll down, reveal on scroll up.
-    ScrollTrigger.create({
-      start: 0,
-      end: "max",
-      onUpdate: (self) => {
-        const hide = self.direction === 1 && self.scroll() > 160;
-        bar.current?.classList.toggle("-translate-y-full", hide);
-      },
-    });
-
     ScrollTrigger.create({
       trigger: "#top",
       start: "bottom top+=96",
@@ -78,8 +67,7 @@ export function Nav() {
       </a>
 
       <header
-        ref={bar}
-        className="fixed inset-x-0 top-0 z-40 text-paper transition-transform duration-500 ease-out-expo"
+        className="fixed inset-x-0 top-0 z-40 text-paper"
       >
         <div className="wrap flex h-16 items-center justify-between md:h-20">
           <a href="#top" className={`-ml-1.5 flex h-11 items-center gap-3 rounded-full px-3.5 md:-ml-3.5 ${pill}`} aria-label={`${siteConfig.name}, back to top`}>

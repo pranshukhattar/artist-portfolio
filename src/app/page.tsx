@@ -9,7 +9,6 @@ import { Videos } from "@/components/sections/Videos";
 import { Journey } from "@/components/sections/Journey";
 import { Gallery } from "@/components/sections/Gallery";
 import { About } from "@/components/sections/About";
-import { Concept } from "@/components/sections/Concept";
 import { BackCover } from "@/components/sections/BackCover";
 
 export default function Home() {
@@ -60,7 +59,6 @@ export default function Home() {
         <Journey />
         <Gallery />
         <About />
-        <Concept />
         <BackCover />
       </main>
       <ChapterRail />
