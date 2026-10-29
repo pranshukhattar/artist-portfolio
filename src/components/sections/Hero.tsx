@@ -4,18 +4,31 @@ import { useRef } from "react";
 import Image from "next/image";
 import hero from "../../../public/landing_page_hero.png";
 import { artist } from "@/content/artist";
-import { EASE, gsap, onIntroDone, prefersReducedMotion, useGSAP } from "@/lib/motion";
+import { singles } from "@/content/music";
+import { siteConfig } from "@/lib/site";
+import {
+  EASE,
+  gsap,
+  onIntroDone,
+  prefersReducedMotion,
+  useGSAP,
+} from "@/lib/motion";
 import { SplitWords } from "@/components/motion/MaskedReveal";
 import { SoundRoll } from "@/components/motion/SoundRoll";
 import { Icon } from "@/components/ui/Icon";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 import { usePlayer } from "@/components/player/PlayerProvider";
+import { Equalizer } from "@/components/player/parts";
 import { scrollToHash } from "@/components/layout/Nav";
 
 // On hover the collage zooms in slightly, then leans toward the cursor. The
 // drift stays inside the margin the zoom creates, so no edge ever shows.
-const HOVER_SCALE = 1.06;
-const DRIFT = { x: 0.85, y: 0.85, copy: 8 }; // share of the zoom margin used; copy in px
+const HOVER_SCALE = 1.07;
+const DRIFT = { x: 0.96, y: 0.96, copy: 20 }; // share of the zoom margin used; copy in px
+
+const latest = singles[0];
+const city = artist.basedIn.split(",")[0];
+const since = artist.milestones[0].year;
 
 export function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -29,9 +42,24 @@ export function Hero() {
       if (!reduce) {
         const intro = gsap.timeline({ paused: true, defaults: { ease: EASE } });
         intro
-          .fromTo("[data-hero-media]", { scale: 1.08 }, { scale: 1, duration: 1.8, ease: "power2.out" }, 0)
-          .fromTo("[data-intro-words] .word", { yPercent: 110, y: 0 }, { yPercent: 0, y: 0, duration: 1, stagger: 0.05 }, 0.15)
-          .fromTo("[data-intro]", { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08 }, 0.55);
+          .fromTo(
+            "[data-hero-media]",
+            { scale: 1.08 },
+            { scale: 1, duration: 1.8, ease: "power2.out" },
+            0,
+          )
+          .fromTo(
+            "[data-intro-words] .word",
+            { yPercent: 110, y: 0 },
+            { yPercent: 0, y: 0, duration: 1, stagger: 0.05 },
+            0.15,
+          )
+          .fromTo(
+            "[data-intro]",
+            { autoAlpha: 0, y: 16 },
+            { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08 },
+            0.55,
+          );
         onIntroDone(() => intro.play());
       }
 
@@ -40,25 +68,41 @@ export function Hero() {
         gsap.to("[data-hero-parallax]", {
           yPercent: 14,
           ease: "none",
-          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
+          scrollTrigger: {
+            trigger: root.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
         });
         gsap.to("[data-hero-copy]", {
           y: -60,
           opacity: 0.2,
           ease: "none",
-          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
+          scrollTrigger: {
+            trigger: root.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
         });
       }
 
       // Pointer: zoom in slightly on enter, then follow the cursor (fine pointers only).
       if (reduce || !window.matchMedia("(pointer: fine)").matches) return;
       const section = root.current!;
-      const follow = { duration: 1.2, ease: "power3.out" };
+      const follow = { duration: 0.9, ease: "power3.out" };
       const panX = gsap.quickTo("[data-hero-pan]", "x", follow);
       const panY = gsap.quickTo("[data-hero-pan]", "y", follow);
       const copyX = gsap.quickTo("[data-hero-copy]", "x", follow);
 
-      const onEnter = () => gsap.to("[data-hero-pan]", { scale: HOVER_SCALE, duration: 1, ease: "power3.out", overwrite: "auto" });
+      const onEnter = () =>
+        gsap.to("[data-hero-pan]", {
+          scale: HOVER_SCALE,
+          duration: 1,
+          ease: "power3.out",
+          overwrite: "auto",
+        });
       const onMove = (e: PointerEvent) => {
         const rect = section.getBoundingClientRect();
         const nx = (e.clientX - rect.left) / rect.width - 0.5;
@@ -71,7 +115,12 @@ export function Hero() {
         copyX(-nx * 2 * DRIFT.copy);
       };
       const settle = () => {
-        gsap.to("[data-hero-pan]", { scale: 1, duration: 1, ease: "power3.out", overwrite: "auto" });
+        gsap.to("[data-hero-pan]", {
+          scale: 1,
+          duration: 1,
+          ease: "power3.out",
+          overwrite: "auto",
+        });
         panX(0);
         panY(0);
         copyX(0);
@@ -119,15 +168,30 @@ export function Hero() {
       </div>
 
       {/* Desktop contrast: ink from the left for the headline, from the top for the nav, from the bottom for the rail. */}
-      <div aria-hidden="true" className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(17,17,17,0.92)_0%,rgba(17,17,17,0.7)_32%,rgba(17,17,17,0)_62%)] md:block" />
-      <div aria-hidden="true" className="absolute inset-x-0 top-0 hidden h-36 bg-gradient-to-b from-ink/75 to-transparent md:block" />
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 hidden h-40 bg-gradient-to-t from-ink/80 to-transparent md:block" />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(17,17,17,0.92)_0%,rgba(17,17,17,0.7)_32%,rgba(17,17,17,0)_62%)] md:block"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 hidden h-36 bg-gradient-to-b from-ink/75 to-transparent md:block"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 hidden h-40 bg-gradient-to-t from-ink/80 to-transparent md:block"
+      />
 
       {/* Phone contrast: long, soft ink washes behind the headline (top) and the socials
           (bottom), leaving the middle of the collage clear. The bottom wash reaches solid ink, so
           the hero dissolves into the next chapter with no edge. */}
-      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[52%] bg-[linear-gradient(180deg,rgba(17,17,17,0.9)_0%,rgba(17,17,17,0.72)_38%,rgba(17,17,17,0)_100%)] md:hidden" />
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[58%] bg-[linear-gradient(0deg,rgba(17,17,17,1)_0%,rgba(17,17,17,0.94)_24%,rgba(17,17,17,0.62)_55%,rgba(17,17,17,0)_100%)] md:hidden" />
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-[52%] bg-[linear-gradient(180deg,rgba(17,17,17,0.9)_0%,rgba(17,17,17,0.72)_38%,rgba(17,17,17,0)_100%)] md:hidden"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-[58%] bg-[linear-gradient(0deg,rgba(17,17,17,1)_0%,rgba(17,17,17,0.94)_24%,rgba(17,17,17,0.62)_55%,rgba(17,17,17,0)_100%)] md:hidden"
+      />
 
       {/* Phones: a poster — headline at the top, the collage through the middle, the socials at
           the bottom. Desktop: everything centred on the left. */}
@@ -135,12 +199,40 @@ export function Hero() {
         data-hero-copy
         className={`wrap relative flex h-full flex-col pt-[calc(64px+3svh)] transition-[padding] duration-700 ease-out-expo md:justify-center md:pt-0 md:pb-0 ${hasStarted ? "pb-[calc(150px+env(safe-area-inset-bottom))]" : "pb-[calc(84px+env(safe-area-inset-bottom))]"}`}
       >
-        <h1 data-intro-words className="font-display text-[clamp(52px,min(16vw,8.4svh),72px)] leading-[0.88] font-bold tracking-[-0.045em] md:text-[clamp(56px,7.6vw,148px)]">
+        {/* Editorial details above the headline: a hairline, the name and where from. */}
+        <span
+          data-intro
+          aria-hidden="true"
+          className="mb-5 hidden h-14 w-px bg-paper/45 md:block"
+        />
+        <p data-intro className="label mb-4 flex items-center gap-3 md:mb-6">
+          <span className="font-semibold">{siteConfig.name}</span>
+          <span
+            aria-hidden="true"
+            className="size-[3px] rounded-full bg-paper/50"
+          />
+          <span className="opacity-60">
+            {city} · Est. {since}
+          </span>
+        </p>
+
+        <h1
+          data-intro-words
+          className="font-display text-[clamp(52px,min(16vw,8.4svh),72px)] leading-[0.88] font-bold tracking-[-0.045em] md:text-[clamp(56px,7.6vw,148px)]"
+        >
           <SplitWords lines={artist.tagline} />
         </h1>
 
+        {/* Now-playing strip: the newest single, with bars that keep moving. */}
+        <p data-intro className="label mt-auto flex items-center gap-3 md:mt-8">
+          <Equalizer playing className="h-3 text-paper" />
+          <span>
+            {latest.title} — {latest.year}
+          </span>
+        </p>
+
         {/* Phones only: socials sit at the bottom (desktop has them in the rail). */}
-        <div data-intro className="mt-auto flex items-center md:hidden">
+        <div data-intro className="mt-4 flex items-center md:hidden">
           <SocialLinks only={["instagram", "youtube", "spotify"]} />
         </div>
 
@@ -156,7 +248,10 @@ export function Hero() {
         className={`absolute inset-x-0 bottom-0 hidden transition-[padding] duration-700 ease-out-expo md:block ${hasStarted ? "pb-28" : "pb-6"}`}
       >
         <div className="wrap">
-          <SocialLinks only={["instagram", "youtube", "spotify"]} className="-ml-2" />
+          <SocialLinks
+            only={["instagram", "youtube", "spotify"]}
+            className="-ml-2"
+          />
         </div>
       </div>
 
@@ -179,11 +274,22 @@ export function Hero() {
             viewBox="0 0 100 100"
             aria-hidden="true"
             className="spin absolute inset-0 size-full"
-            style={{ ["--spin" as string]: "16s", ["--spin-state" as string]: "running" }}
+            style={{
+              ["--spin" as string]: "16s",
+              ["--spin-state" as string]: "running",
+            }}
           >
-            <path id="scroll-cue-ring" fill="none" d="M50,50 m-39,0 a39,39 0 1,1 78,0 a39,39 0 1,1 -78,0" />
+            <path
+              id="scroll-cue-ring"
+              fill="none"
+              d="M50,50 m-39,0 a39,39 0 1,1 78,0 a39,39 0 1,1 -78,0"
+            />
             <text className="fill-paper text-[8.5px] font-semibold uppercase">
-              <textPath href="#scroll-cue-ring" textLength={242} lengthAdjust="spacing">
+              <textPath
+                href="#scroll-cue-ring"
+                textLength={242}
+                lengthAdjust="spacing"
+              >
                 Scroll to listen • Scroll to listen •
               </textPath>
             </text>
