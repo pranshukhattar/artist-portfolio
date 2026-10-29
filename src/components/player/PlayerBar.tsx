@@ -1,11 +1,9 @@
 "use client";
 
 import { siteConfig } from "@/lib/site";
-import { releaseForTrack } from "@/content/music";
-import { Cover } from "@/components/ui/Cover";
 import { Icon } from "@/components/ui/Icon";
 import { usePlayer, usePlayerTime } from "./PlayerProvider";
-import { Equalizer, ghostButton } from "./parts";
+import { Disc, ghostButton } from "./parts";
 
 /** Hairline progress along the bottom edge of the mini player. */
 function Progress() {
@@ -37,14 +35,14 @@ export function PlayerBar() {
             className="group/open flex min-w-0 flex-1 items-center gap-3 rounded-xl pr-2 text-left"
             aria-label={`Open player: ${track.title}`}
           >
-            <span className="relative size-11 shrink-0 overflow-hidden rounded-lg ring-1 ring-paper/10">
-              <Cover crop={releaseForTrack(track.id).cover} alt="" className="size-full transition-transform duration-500 ease-out-expo group-hover/open:scale-110" />
-              {/* Bars over the artwork while playing, on a soft scrim so they read on any cover. */}
+            {/* The record spins while playing; hovering shows that it opens the full player. */}
+            <span className="relative size-11 shrink-0">
+              <Disc track={track} spinning={isPlaying} className="size-full ring-1 ring-paper/15" />
               <span
                 aria-hidden="true"
-                className={`absolute inset-0 grid place-items-center bg-ink/45 transition-opacity duration-300 ${isPlaying ? "opacity-100" : "opacity-0"}`}
+                className="absolute inset-0 grid place-items-center rounded-full bg-ink/55 opacity-0 transition-opacity duration-200 group-hover/open:opacity-100 group-focus-visible/open:opacity-100"
               >
-                <Equalizer playing={isPlaying} className="h-4 text-paper" />
+                <Icon name="expand" size={16} />
               </span>
             </span>
             <span className="min-w-0">

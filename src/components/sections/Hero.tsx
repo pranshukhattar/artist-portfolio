@@ -4,7 +4,6 @@ import { useRef } from "react";
 import Image from "next/image";
 import hero from "../../../public/landing_page_hero.png";
 import { artist } from "@/content/artist";
-import { singles } from "@/content/music";
 import { EASE, gsap, onIntroDone, prefersReducedMotion, useGSAP } from "@/lib/motion";
 import { SplitWords } from "@/components/motion/MaskedReveal";
 import { SoundRoll } from "@/components/motion/SoundRoll";
@@ -18,14 +17,9 @@ import { scrollToHash } from "@/components/layout/Nav";
 const HOVER_SCALE = 1.06;
 const DRIFT = { x: 0.85, y: 0.85, copy: 8 }; // share of the zoom margin used; copy in px
 
-const latest = singles[0];
-const latestId = latest.trackIds[0];
-const singleIds = singles.map((r) => r.trackIds[0]);
-
 export function Hero() {
   const root = useRef<HTMLElement>(null);
-  const { play, toggle, isPlaying, track, hasStarted } = usePlayer();
-  const isLatestPlaying = isPlaying && track?.id === latestId;
+  const { hasStarted } = usePlayer();
 
   useGSAP(
     () => {
@@ -129,13 +123,13 @@ export function Hero() {
       <div aria-hidden="true" className="absolute inset-x-0 top-0 hidden h-36 bg-gradient-to-b from-ink/75 to-transparent md:block" />
       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 hidden h-40 bg-gradient-to-t from-ink/80 to-transparent md:block" />
 
-      {/* Phone contrast: long, soft ink washes behind the headline (top) and the call to action
+      {/* Phone contrast: long, soft ink washes behind the headline (top) and the socials
           (bottom), leaving the middle of the collage clear. The bottom wash reaches solid ink, so
           the hero dissolves into the next chapter with no edge. */}
       <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[52%] bg-[linear-gradient(180deg,rgba(17,17,17,0.9)_0%,rgba(17,17,17,0.72)_38%,rgba(17,17,17,0)_100%)] md:hidden" />
       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[58%] bg-[linear-gradient(0deg,rgba(17,17,17,1)_0%,rgba(17,17,17,0.94)_24%,rgba(17,17,17,0.62)_55%,rgba(17,17,17,0)_100%)] md:hidden" />
 
-      {/* Phones: a poster — headline at the top, the collage through the middle, the call to action at
+      {/* Phones: a poster — headline at the top, the collage through the middle, the socials at
           the bottom. Desktop: everything centred on the left. */}
       <div
         data-hero-copy
@@ -145,25 +139,9 @@ export function Hero() {
           <SplitWords lines={artist.tagline} />
         </h1>
 
-        <div data-intro className="mt-auto md:mt-8">
-          <p className="text-base md:text-lg">New single out now.</p>
-          <p className="label mt-1 opacity-60">
-            {latest.title} · {latest.year} · Single
-          </p>
-        </div>
-
-        <div data-intro className="mt-6 flex items-center gap-3 md:mt-8">
-          <button
-            type="button"
-            onClick={() => (track?.id === latestId ? toggle() : play(latestId, singleIds))}
-            data-cursor={isLatestPlaying ? "Pause" : "Play"}
-            className="group inline-flex h-11 items-center gap-3 rounded-full px-5 text-[11px] font-semibold tracking-[0.14em] uppercase ring-1 ring-paper/70 transition-colors duration-300 hover:bg-paper hover:text-ink"
-          >
-            <Icon name={isLatestPlaying ? "pause" : "play"} size={18} />
-            {isLatestPlaying ? "Playing" : "Listen now"}
-            <Icon name="arrowRight" size={18} className="transition-transform duration-300 ease-out-expo group-hover:translate-x-1" />
-          </button>
-          <SocialLinks only={["instagram", "youtube", "spotify"]} className="md:hidden" />
+        {/* Phones only: socials sit at the bottom (desktop has them in the rail). */}
+        <div data-intro className="mt-auto flex items-center md:hidden">
+          <SocialLinks only={["instagram", "youtube", "spotify"]} />
         </div>
 
         {/* Phones: the sound in words rolls along the bottom (desktop has it in its own section). */}
