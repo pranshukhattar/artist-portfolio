@@ -18,7 +18,6 @@ import { SoundRoll } from "@/components/motion/SoundRoll";
 import { Cover } from "@/components/ui/Cover";
 import { Icon } from "@/components/ui/Icon";
 import { SocialLinks } from "@/components/ui/SocialLinks";
-import { usePlayer } from "@/components/player/PlayerProvider";
 import { Equalizer } from "@/components/player/parts";
 import { scrollToHash } from "@/components/layout/Nav";
 
@@ -33,7 +32,6 @@ const since = artist.milestones[0].year;
 
 export function Hero() {
   const root = useRef<HTMLElement>(null);
-  const { hasStarted } = usePlayer();
 
   useGSAP(
     () => {
@@ -210,7 +208,7 @@ export function Hero() {
           the bottom. Desktop: everything centred on the left. */}
       <div
         data-hero-copy
-        className={`wrap relative flex h-full flex-col pt-[calc(64px+3svh)] transition-[padding] duration-700 ease-out-expo md:justify-center md:pt-0 md:pb-0 ${hasStarted ? "pb-[calc(150px+env(safe-area-inset-bottom))]" : "pb-[calc(84px+env(safe-area-inset-bottom))]"}`}
+        className="wrap relative flex h-full flex-col pt-[calc(64px+3svh)] pb-[calc(84px+env(safe-area-inset-bottom))] md:justify-center md:pt-0 md:pb-0"
       >
         {/* Editorial details above the headline: a hairline, the name and where from. */}
         <span
@@ -285,10 +283,10 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Desktop rail: socials bottom-left. Lifts above the player once it docks. */}
+      {/* Desktop rail: socials bottom-left. */}
       <div
         data-intro
-        className={`absolute inset-x-0 bottom-0 hidden transition-[padding] duration-700 ease-out-expo md:block ${hasStarted ? "pb-28" : "pb-6"}`}
+        className="absolute inset-x-0 bottom-0 hidden pb-6 md:block"
       >
         <div className="wrap">
           <SocialLinks
@@ -299,10 +297,10 @@ export function Hero() {
       </div>
 
       {/* Scroll cue (desktop): a label turning like a record around a bobbing arrow.
-          Lifts above the player once it docks. Phones have the tab bar instead. */}
+          Phones have the tab bar instead. */}
       <div
         data-intro
-        className={`absolute right-[clamp(16px,4vw,60px)] hidden transition-[bottom] duration-700 ease-out-expo md:block ${hasStarted ? "bottom-28" : "bottom-6"}`}
+        className="absolute right-[clamp(16px,4vw,60px)] bottom-6 hidden md:block"
       >
         <a
           href="#music"

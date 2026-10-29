@@ -15,6 +15,8 @@ export type Track = {
   duration: string;
   genre: string;
   audio?: string;
+  /** Where the best part starts, in seconds: the "best part" button plays from here. */
+  hook?: number;
   links: Partial<Record<Platform, string>>;
 };
 
@@ -39,21 +41,23 @@ const links = {
   youtube: "https://youtube.com/",
 };
 
-const track = (id: string, title: string, duration: string, genre: string, audio?: string): Track => ({
+const track = (id: string, title: string, duration: string, genre: string, audio?: string, hook?: number): Track => ({
   id,
   title,
   duration,
   genre,
   audio,
+  hook,
   links,
 });
 
 export const tracks: Track[] = [
   // PLACEHOLDER genres, guessed from the song notes below.
-  track("summer-days", "Summer Days", "3:42", "Synth-pop", "/audio/summer-days.wav"),
-  track("suburbia", "Suburbia", "3:18", "Indie electronic", "/audio/suburbia.wav"),
-  track("sor", "S.O.R", "2:46", "Electronic", "/audio/sor.wav"),
-  track("ananke", "Ananke", "4:02", "Ambient", "/audio/ananke.wav"),
+  // PLACEHOLDER hooks: the stand-in clips are 24s long; set these to each song's real best part.
+  track("summer-days", "Summer Days", "3:42", "Synth-pop", "/audio/summer-days.wav", 6),
+  track("suburbia", "Suburbia", "3:18", "Indie electronic", "/audio/suburbia.wav", 8),
+  track("sor", "S.O.R", "2:46", "Electronic", "/audio/sor.wav", 4),
+  track("ananke", "Ananke", "4:02", "Ambient", "/audio/ananke.wav", 7),
 ];
 
 const selfCredits: Credit[] = [

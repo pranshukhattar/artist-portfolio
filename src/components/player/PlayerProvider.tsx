@@ -1,13 +1,15 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { getTrack, playableTrackIds, releaseForTrack, type Track } from "@/content/music";
+import { getTrack, playableTrackIds, releaseForTrack, singles, type Track } from "@/content/music";
 import { siteConfig } from "@/lib/site";
 
 type PlayerState = {
+  /** The loaded track. The newest single is cued on load, so this is set before anything plays. */
   track: Track | null;
   queue: string[];
   isPlaying: boolean;
+  /** Something has actually played (and the player wasn't closed since). */
   hasStarted: boolean;
   expanded: boolean;
   volume: number;
@@ -43,8 +45,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [volume, setVolumeState] = useState(0.9);
   const [muted, setMuted] = useState(false);
   const [time, setTime] = useState<PlayerTime>({ currentTime: 0, duration: 0 });
-  // The very first play opens the full player; after that it stays however the visitor left it.
-  const firstPlay = useRef(true);
+  const [started, setStarted] = useState(false);
 
   const track = trackId ? (getTrack(trackId) ?? null) : null;
 
@@ -56,10 +57,6 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       el.src = next.audio;
       setTrackId(id);
       setTime({ currentTime: 0, duration: 0 });
-    }
-    if (firstPlay.current) {
-      firstPlay.current = false;
-      setExpanded(true);
     }
     el.play().catch(() => setIsPlaying(false));
   }, [trackId]);
@@ -103,17 +100,17 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   const pause = useCallback(() => audio.current?.pause(), []);
 
+  // Stop and put the player away; the track stays cued at the start.
   const close = useCallback(() => {
     const el = audio.current;
     if (el) {
       el.pause();
-      el.removeAttribute("src");
-      el.load();
+      el.currentTime = 0;
     }
-    setTrackId(null);
+    setStarted(false);
     setExpanded(false);
     setIsPlaying(false);
-    setTime({ currentTime: 0, duration: 0 });
+    setTime((t) => ({ ...t, currentTime: 0 }));
   }, []);
 
   const seek = useCallback((seconds: number) => {
@@ -133,9 +130,19 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     if (audio.current) audio.current.muted = muted;
   }, [muted]);
 
-  // Lock-screen / headphone controls.
+  // Cue the newest single on load (metadata only), so its real length and a working
+  // progress bar show before anything plays.
   useEffect(() => {
-    if (!("mediaSession" in navigator) || !track) return;
+    const el = audio.current;
+    const first = getTrack(singles[0].trackIds[0]);
+    if (!el || !first?.audio || el.getAttribute("src")) return;
+    el.src = first.audio;
+    setTrackId(first.id);
+  }, []);
+
+  // Lock-screen / headphone controls, once something has played.
+  useEffect(() => {
+    if (!("mediaSession" in navigator) || !track || !started) return;
     const release = releaseForTrack(track.id);
     navigator.mediaSession.metadata = new MediaMetadata({
       title: track.title,
@@ -152,7 +159,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     ];
     handlers.forEach(([action, handler]) => navigator.mediaSession.setActionHandler(action, handler));
     return () => handlers.forEach(([action]) => navigator.mediaSession.setActionHandler(action, null));
-  }, [track, next, prev, seek]);
+  }, [track, started, next, prev, seek]);
 
   useEffect(() => {
     if ("mediaSession" in navigator) navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
@@ -163,7 +170,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       track,
       queue,
       isPlaying,
-      hasStarted: track !== null,
+      hasStarted: started,
       expanded,
       volume,
       muted,
@@ -178,7 +185,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       toggleMute,
       setExpanded,
     }),
-    [track, queue, isPlaying, expanded, volume, muted, play, toggle, pause, close, next, prev, seek, setVolume, toggleMute],
+    [track, queue, isPlaying, started, expanded, volume, muted, play, toggle, pause, close, next, prev, seek, setVolume, toggleMute],
   );
 
   return (
@@ -187,8 +194,11 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         {children}
         <audio
           ref={audio}
-          preload="none"
-          onPlay={() => setIsPlaying(true)}
+          preload="metadata"
+          onPlay={() => {
+            setIsPlaying(true);
+            setStarted(true);
+          }}
           onPause={() => setIsPlaying(false)}
           onEnded={next}
           onLoadedMetadata={(e) => setTime({ currentTime: 0, duration: e.currentTarget.duration })}

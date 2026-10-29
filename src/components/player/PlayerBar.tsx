@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { siteConfig } from "@/lib/site";
 import { Icon } from "@/components/ui/Icon";
 import { usePlayer, usePlayerTime } from "./PlayerProvider";
@@ -16,10 +17,46 @@ function Progress() {
   );
 }
 
-/** Mini player: a small floating card in the bottom-right corner. Pops in after the first play. */
+/** True once the music section has scrolled (mostly) out of view above. */
+function usePastMusic() {
+  const [past, setPast] = useState(false);
+  useEffect(() => {
+    const music = document.getElementById("music");
+    if (!music) return;
+    let frame = 0;
+    const check = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => setPast(music.getBoundingClientRect().bottom < window.innerHeight * 0.3));
+    };
+    check();
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", check);
+      window.removeEventListener("resize", check);
+    };
+  }, []);
+  return past;
+}
+
+/**
+ * Mini player: a small floating card in the bottom-right corner. The music section
+ * has its own controls, so it only pops in once a song is playing and the visitor
+ * has scrolled past that section. Pausing from it doesn't make it vanish; scrolling
+ * back up to the music does.
+ */
 export function PlayerBar() {
   const { track, hasStarted, isPlaying, toggle, next, close, expanded, setExpanded } = usePlayer();
-  const visible = hasStarted && !expanded;
+  const past = usePastMusic();
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    if (!past || !hasStarted) setShown(false);
+    else if (isPlaying) setShown(true);
+  }, [past, hasStarted, isPlaying]);
+
+  const visible = shown && !expanded;
 
   return (
     <section

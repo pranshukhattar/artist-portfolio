@@ -154,6 +154,17 @@ html.js.preload .preloader {
   to { transform: scaleY(1); }
 }
 
+/* ---------- Best-part preview: fills its button as the segment plays ---------- */
+.hook-fill {
+  transform-origin: left;
+  animation: hook-fill var(--hook-length, 15s) linear forwards;
+}
+
+@keyframes hook-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 /* ---------- Route stops (The road so far) ---------- */
 .route-stop {
   background: var(--color-paper);
