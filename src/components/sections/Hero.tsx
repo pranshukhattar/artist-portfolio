@@ -15,6 +15,7 @@ import {
 } from "@/lib/motion";
 import { SplitWords } from "@/components/motion/MaskedReveal";
 import { SoundRoll } from "@/components/motion/SoundRoll";
+import { Cover } from "@/components/ui/Cover";
 import { Icon } from "@/components/ui/Icon";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 import { usePlayer } from "@/components/player/PlayerProvider";
@@ -24,7 +25,7 @@ import { scrollToHash } from "@/components/layout/Nav";
 // On hover the collage zooms in slightly, then leans toward the cursor. The
 // drift stays inside the margin the zoom creates, so no edge ever shows.
 const HOVER_SCALE = 1.07;
-const DRIFT = { x: 0.96, y: 0.96, copy: 20 }; // share of the zoom margin used; copy in px
+const DRIFT = { x: 0.96, y: 0.96, copy: 20, polaroid: 14, tilt: 4 }; // share of the zoom margin used; copy/polaroid in px, tilt in deg
 
 const latest = singles[0];
 const city = artist.basedIn.split(",")[0];
@@ -59,6 +60,12 @@ export function Hero() {
             { autoAlpha: 0, y: 16 },
             { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08 },
             0.55,
+          )
+          .fromTo(
+            "[data-polaroid-drop]",
+            { y: -48, rotation: -14 },
+            { y: 0, rotation: 0, duration: 1.1, ease: "back.out(1.7)" },
+            0.7,
           );
         onIntroDone(() => intro.play());
       }
@@ -95,6 +102,8 @@ export function Hero() {
       const panX = gsap.quickTo("[data-hero-pan]", "x", follow);
       const panY = gsap.quickTo("[data-hero-pan]", "y", follow);
       const copyX = gsap.quickTo("[data-hero-copy]", "x", follow);
+      const polaroidX = gsap.quickTo("[data-polaroid-tilt]", "x", follow);
+      const polaroidTilt = gsap.quickTo("[data-polaroid-tilt]", "rotation", follow);
 
       const onEnter = () =>
         gsap.to("[data-hero-pan]", {
@@ -113,6 +122,8 @@ export function Hero() {
         panX(nx * 2 * marginX * DRIFT.x);
         panY(ny * 2 * marginY * DRIFT.y);
         copyX(-nx * 2 * DRIFT.copy);
+        polaroidX(-nx * 2 * DRIFT.polaroid);
+        polaroidTilt(nx * 2 * DRIFT.tilt);
       };
       const settle = () => {
         gsap.to("[data-hero-pan]", {
@@ -124,6 +135,8 @@ export function Hero() {
         panX(0);
         panY(0);
         copyX(0);
+        polaroidX(0);
+        polaroidTilt(0);
       };
       const onVisibility = () => document.hidden && settle();
 
@@ -216,12 +229,42 @@ export function Hero() {
           </span>
         </p>
 
-        <h1
-          data-intro-words
-          className="font-display text-[clamp(52px,min(16vw,8.4svh),72px)] leading-[0.88] font-bold tracking-[-0.045em] md:text-[clamp(56px,7.6vw,148px)]"
-        >
-          <SplitWords lines={artist.tagline} />
-        </h1>
+        {/* The headline sets the font size here so the polaroid can be placed and sized in em:
+            it fills the gap right of "Sounds" and "for the", one corner resting on "inbetween". */}
+        <div className="relative w-fit text-[clamp(52px,min(16vw,8.4svh),72px)] md:text-[clamp(56px,7.6vw,148px)]">
+          <h1
+            data-intro-words
+            className="font-display leading-[0.88] font-bold tracking-[-0.045em]"
+          >
+            <SplitWords lines={artist.tagline} />
+          </h1>
+
+          {/* Polaroid: outer places it, middle sways with the cursor, inner drops in on intro. */}
+          <div
+            data-intro
+            className="pointer-events-none absolute top-[0.02em] left-[3.55em] w-[1.12em] rotate-[7deg]"
+          >
+            <div data-polaroid-tilt>
+              <figure
+                data-polaroid-drop
+                className="relative bg-paper p-[0.05em] pb-0 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.75)]"
+              >
+                <Cover
+                  crop={artist.portrait.crop}
+                  alt={artist.portrait.alt}
+                  className="aspect-[4/5] w-full"
+                />
+                <figcaption className="py-[0.45em] text-center font-hand text-[clamp(14px,1.25vw,22px)] leading-none text-ink">
+                  {city}, {since}
+                </figcaption>
+                <span
+                  aria-hidden="true"
+                  className="absolute -top-[0.07em] left-1/2 h-[0.15em] w-[0.5em] -translate-x-1/2 -rotate-[5deg] bg-paper/75 shadow-sm"
+                />
+              </figure>
+            </div>
+          </div>
+        </div>
 
         {/* Now-playing strip: the newest single, with bars that keep moving. */}
         <p data-intro className="label mt-auto flex items-center gap-3 md:mt-8">

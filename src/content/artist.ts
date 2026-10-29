@@ -1,6 +1,14 @@
 // Site copy from the v2 mockup.
+import type { Crop } from "./music";
+
 export const artist = {
   tagline: ["Sounds", "for the", "inbetween"],
+  // The polaroid tucked against the hero headline.
+  // PLACEHOLDER: a crop of the collage stands in for a photo of the artist.
+  portrait: {
+    crop: { x: 89, y: 45, zoom: 3 } as Crop,
+    alt: "A worn CD with a handwritten lyric, standing in for a photo of the artist",
+  },
   concept: "A sonic journey through time, places and feeling.",
   about:
     "Music has always been a way for me to make sense of the noise. This project is a collection of moments, sounds and emotions — not a fixed identity, but a constant search.",
