@@ -15,7 +15,6 @@ import {
 } from "@/lib/motion";
 import { SplitWords } from "@/components/motion/MaskedReveal";
 import { SoundRoll } from "@/components/motion/SoundRoll";
-import { Cover } from "@/components/ui/Cover";
 import { Icon } from "@/components/ui/Icon";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 import { Equalizer } from "@/components/player/parts";
@@ -247,11 +246,16 @@ export function Hero() {
                 data-polaroid-drop
                 className="relative bg-paper p-[0.05em] pb-0 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.75)]"
               >
-                <Cover
-                  crop={artist.portrait.crop}
-                  alt={artist.portrait.alt}
-                  className="aspect-[4/5] w-full"
-                />
+                <span className="relative block aspect-[4/5] w-full overflow-hidden bg-ink-soft">
+                  <Image
+                    src={artist.portrait.src}
+                    alt={artist.portrait.alt}
+                    fill
+                    sizes="180px"
+                    className="object-cover"
+                    style={{ objectPosition: artist.portrait.position }}
+                  />
+                </span>
                 <figcaption className="py-[0.45em] text-center font-hand text-[clamp(14px,1.25vw,22px)] leading-none text-ink">
                   {city}, {since}
                 </figcaption>

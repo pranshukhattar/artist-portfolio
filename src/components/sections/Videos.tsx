@@ -1,13 +1,13 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Image from "next/image";
 import { siteConfig } from "@/lib/site";
 import { videos, type Video } from "@/content/media";
 import { gsap, prefersReducedMotion, useGSAP } from "@/lib/motion";
 import { Chapter, ChapterTitle } from "@/components/motion/Chapter";
 import { MaskedReveal } from "@/components/motion/MaskedReveal";
 import { usePlayer } from "@/components/player/PlayerProvider";
-import { Cover } from "@/components/ui/Cover";
 import { Icon } from "@/components/ui/Icon";
 import { button } from "@/components/ui/button";
 
@@ -89,7 +89,14 @@ function VideoCard({ video, featured = false }: { video: Video; featured?: boole
   const content = (
     <>
       <div data-poster className="absolute inset-0 transition-transform duration-[1200ms] ease-out-expo group-hover:scale-[1.03]">
-        <Cover crop={video.poster} alt="" className="size-full" />
+        <Image
+          src={video.poster}
+          alt=""
+          fill
+          sizes={featured ? "(min-width: 768px) 92vw, 100vw" : "(min-width: 768px) 46vw, 100vw"}
+          className="object-cover"
+          style={{ objectPosition: video.posterPosition }}
+        />
       </div>
       <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,17,17,0.15)_0%,rgba(17,17,17,0.35)_55%,rgba(17,17,17,0.85)_100%)]" />
       <span

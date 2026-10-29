@@ -269,7 +269,7 @@ function Print({
             data-drift
             className="absolute inset-y-0 -inset-x-[10%] transition-transform duration-700 ease-out-expo group-hover/print:scale-[1.03]"
           >
-            <PhotoImage photo={photo} sizes="(min-width: 768px) 40vw, 80vw" />
+            <PhotoImage photo={photo} sizes="(min-width: 768px) 75vw, 90vw" />
           </div>
         </div>
       </button>

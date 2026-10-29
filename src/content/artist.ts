@@ -1,13 +1,17 @@
 // Site copy from the v2 mockup.
-import type { Crop } from "./music";
-
 export const artist = {
   tagline: ["Sounds", "for the", "inbetween"],
+  // PLACEHOLDER photos (Unsplash, see credits.ts): swap in the artist's own.
   // The polaroid tucked against the hero headline.
-  // PLACEHOLDER: a crop of the collage stands in for a photo of the artist.
   portrait: {
-    crop: { x: 89, y: 45, zoom: 3 } as Crop,
-    alt: "A worn CD with a handwritten lyric, standing in for a photo of the artist",
+    src: "/photos/polaroid.jpg",
+    position: "30% 50%",
+    alt: "Hands on an electric guitar in low light",
+  },
+  // The photo beside the About story.
+  photo: {
+    src: "/photos/about.jpg",
+    alt: "A DJ in a red hoodie and headphones behind the decks, lit orange",
   },
   concept: "A sonic journey through time, places and feeling.",
   about:

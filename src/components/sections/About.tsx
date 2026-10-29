@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { siteConfig } from "@/lib/site";
 import { artist } from "@/content/artist";
 import { playableTrackIds, releases } from "@/content/music";
@@ -9,11 +10,9 @@ import { Chapter, ChapterTitle } from "@/components/motion/Chapter";
 import { MaskedReveal } from "@/components/motion/MaskedReveal";
 import { ScrubText } from "@/components/motion/ScrubText";
 import { usePlayer } from "@/components/player/PlayerProvider";
-import { Cover } from "@/components/ui/Cover";
 import { Icon } from "@/components/ui/Icon";
 import { Marginalia } from "@/components/ui/Marginalia";
 
-const PORTRAIT = { x: 84, y: 20, zoom: 2.4 };
 
 // Releases are newest first.
 const LATEST = releases[0];
@@ -40,7 +39,7 @@ export function About() {
         <div className="mx-auto w-full max-w-sm md:col-span-4 md:max-w-none">
           <div data-portrait-frame className="relative aspect-[4/3] overflow-hidden md:aspect-[4/5] shadow-[0_1px_2px_rgba(0,0,0,0.1),0_24px_48px_-20px_rgba(0,0,0,0.35)]">
             <div data-portrait className="absolute -inset-y-[10%] inset-x-0">
-              <Cover crop={PORTRAIT} alt="Detail of the collage: a colour-wheel record label and red vinyl" className="size-full" />
+              <Image src={artist.photo.src} alt={artist.photo.alt} fill sizes="(min-width: 768px) 34vw, 384px" className="object-cover" />
             </div>
           </div>
           <Marginalia className="mt-4 -rotate-3 text-ink/70">music is a form of home</Marginalia>
