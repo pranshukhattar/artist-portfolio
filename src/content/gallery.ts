@@ -17,11 +17,44 @@ export type Photo = {
 };
 
 export const photos: Photo[] = [
-  { id: "studio", crop: { x: 72, y: 24, zoom: 3 }, alt: "Placeholder: collage detail", caption: "where the songs start", meta: "Studio · Mumbai", shape: "portrait" },
-  { id: "soundcheck", crop: { x: 40, y: 40, zoom: 3 }, alt: "Placeholder: collage detail", caption: "soundcheck, 4pm", meta: "Live · 2024", shape: "landscape" },
-  { id: "crowd", crop: { x: 33, y: 88, zoom: 3.2 }, alt: "Placeholder: collage detail", caption: "a little louder", meta: "Live · 2023", shape: "square" },
-  { id: "notes", crop: { x: 92, y: 30, zoom: 2.2 }, alt: "Placeholder: collage detail", caption: "notes for Summer Days", meta: "Studio · 2024", shape: "portrait" },
-  { id: "night", crop: { x: 20, y: 14, zoom: 2 }, alt: "Placeholder: collage detail", caption: "after the show", meta: "On the road · 2023", shape: "landscape" },
-  { id: "records", crop: { x: 8, y: 50, zoom: 2.2 }, alt: "Placeholder: collage detail", caption: "the crate", meta: "Home · Mumbai", shape: "portrait" },
-  { id: "window", crop: { x: 84, y: 20, zoom: 2.6 }, alt: "Placeholder: collage detail", caption: "same sky, different sound", meta: "Travel · 2024", shape: "square" },
+  {
+    id: "studio",
+    crop: { x: 72, y: 24, zoom: 3 },
+    alt: "Placeholder: collage detail",
+    caption: "where the songs start",
+    meta: "Studio · Mumbai",
+    shape: "portrait",
+  },
+  {
+    id: "soundcheck",
+    crop: { x: 40, y: 40, zoom: 3 },
+    alt: "Placeholder: collage detail",
+    caption: "soundcheck, 4pm",
+    meta: "Live · 2024",
+    shape: "landscape",
+  },
+  {
+    id: "crowd",
+    crop: { x: 33, y: 88, zoom: 3.2 },
+    alt: "Placeholder: collage detail",
+    caption: "a little louder",
+    meta: "Live · 2023",
+    shape: "square",
+  },
+  {
+    id: "notes",
+    crop: { x: 92, y: 30, zoom: 2.2 },
+    alt: "Placeholder: collage detail",
+    caption: "notes for Summer Days",
+    meta: "Studio · 2024",
+    shape: "portrait",
+  },
+  {
+    id: "night",
+    crop: { x: 20, y: 14, zoom: 2 },
+    alt: "Placeholder: collage detail",
+    caption: "after the show",
+    meta: "On the road · 2023",
+    shape: "landscape",
+  },
 ];

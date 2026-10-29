@@ -24,7 +24,7 @@ export const artist = {
   // PLACEHOLDER: replace with the artist's own genres and moods.
   sound: ["Electronic", "Ambient", "Guitar loops", "Late-night", "Analog textures", "Made in Mumbai"],
   // PLACEHOLDER: the artist's real milestones go here. Rows that point at a
-  // single play it; the last row is what's next (the back cover right below has the mailing list).
+  // single play it; the last row is what's next.
   milestones: [
     { year: "2019", title: "Where it started", text: "First sketches and loops, made late at night between Mumbai's noise and its quiet." },
     { year: "2021", title: "S.O.R & Ananke", text: "The first two singles go out into the world.", trackId: "sor" },
