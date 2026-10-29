@@ -15,11 +15,48 @@
   --color-sky: #5ba3c9;
   --color-grey: #c7c7be;
 
-  --font-display: var(--font-space-grotesk), "Helvetica Neue", Arial, sans-serif;
+  --font-display:
+    var(--font-space-grotesk), "Helvetica Neue", Arial, sans-serif;
   --font-sans: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
   --font-hand: var(--font-caveat), "Bradley Hand", cursive;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------- Photo finish: the polaroid look ----------
+   Every photo on the site wears this: fine film grain plus a faint print tone.
+   Tune it here; nothing else needs to change.
+     --grain-opacity  strength of the grain. 0 turns it off; ~0.2 is barely there, ~0.45 is heavy.
+     --grain-size     size of one grain tile. Smaller = finer grain.
+     --grain-blend    how the grain mixes in (overlay keeps colours, soft-light is gentler).
+     --photo-tone     a CSS filter on the photo itself. `none` turns it off. */
+:root {
+  --grain-opacity: 0.5;
+  --grain-size: 240px;
+  --grain-blend: overlay;
+  --photo-tone: contrast(1.04) saturate(0.9) sepia(0.06);
+}
+
+/* Put `grain` on a positioned box (relative or absolute) that holds an image.
+   Isolated, so the grain stays on the photo and never sits over text laid on top of it. */
+.grain {
+  isolation: isolate;
+}
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: var(--grain-size);
+  opacity: var(--grain-opacity);
+  mix-blend-mode: var(--grain-blend);
+}
+
+.grain img {
+  filter: var(--photo-tone);
 }
 
 @layer base {
@@ -108,11 +145,15 @@ html.js [data-intro-words] .word {
 }
 
 @keyframes intro-failsafe {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes intro-failsafe-words {
-  to { transform: none; }
+  to {
+    transform: none;
+  }
 }
 
 /* ---------- Preloader ---------- */
@@ -126,7 +167,9 @@ html.js.preload .preloader {
 }
 
 @keyframes preloader-failsafe {
-  to { visibility: hidden; }
+  to {
+    visibility: hidden;
+  }
 }
 
 /* ---------- Spinning disc ---------- */
@@ -136,7 +179,9 @@ html.js.preload .preloader {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ---------- Now-playing bars ---------- */
@@ -146,12 +191,20 @@ html.js.preload .preloader {
   animation-play-state: var(--eq-state, paused);
 }
 
-.eq > span:nth-child(2) { animation-delay: -0.3s; }
-.eq > span:nth-child(3) { animation-delay: -0.6s; }
+.eq > span:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.eq > span:nth-child(3) {
+  animation-delay: -0.6s;
+}
 
 @keyframes eq {
-  from { transform: scaleY(0.3); }
-  to { transform: scaleY(1); }
+  from {
+    transform: scaleY(0.3);
+  }
+  to {
+    transform: scaleY(1);
+  }
 }
 
 /* ---------- Best-part preview: fills its button as the segment plays ---------- */
@@ -161,15 +214,22 @@ html.js.preload .preloader {
 }
 
 @keyframes hook-fill {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
 /* ---------- Route stops (The road so far) ---------- */
 .route-stop {
   background: var(--color-paper);
-  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--color-ink) 35%, transparent);
-  transition: background-color 0.4s, box-shadow 0.4s;
+  box-shadow: inset 0 0 0 1.5px
+    color-mix(in srgb, var(--color-ink) 35%, transparent);
+  transition:
+    background-color 0.4s,
+    box-shadow 0.4s;
 }
 
 .route-stop.is-passed {
@@ -191,8 +251,13 @@ html.js.preload .preloader {
 }
 
 @keyframes scroll-bob {
-  0%, 100% { transform: translateY(-3px); }
-  50% { transform: translateY(4px); }
+  0%,
+  100% {
+    transform: translateY(-3px);
+  }
+  50% {
+    transform: translateY(4px);
+  }
 }
 
 /* ---------- Range scrubber ---------- */
@@ -207,13 +272,21 @@ html.js.preload .preloader {
 .scrubber::-webkit-slider-runnable-track {
   height: 2px;
   border-radius: 2px;
-  background: linear-gradient(to right, currentColor var(--progress), color-mix(in srgb, currentColor 22%, transparent) var(--progress));
+  background: linear-gradient(
+    to right,
+    currentColor var(--progress),
+    color-mix(in srgb, currentColor 22%, transparent) var(--progress)
+  );
 }
 
 .scrubber::-moz-range-track {
   height: 2px;
   border-radius: 2px;
-  background: linear-gradient(to right, currentColor var(--progress), color-mix(in srgb, currentColor 22%, transparent) var(--progress));
+  background: linear-gradient(
+    to right,
+    currentColor var(--progress),
+    color-mix(in srgb, currentColor 22%, transparent) var(--progress)
+  );
 }
 
 .scrubber::-webkit-slider-thumb {
@@ -247,12 +320,24 @@ html.js.preload .preloader {
 
 .progressive-blur > div:nth-child(1) {
   backdrop-filter: blur(1px);
-  mask: linear-gradient(to bottom, transparent 0%, #000 25%, #000 50%, transparent 75%);
+  mask: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 25%,
+    #000 50%,
+    transparent 75%
+  );
 }
 
 .progressive-blur > div:nth-child(2) {
   backdrop-filter: blur(3px);
-  mask: linear-gradient(to bottom, transparent 25%, #000 50%, #000 75%, transparent 100%);
+  mask: linear-gradient(
+    to bottom,
+    transparent 25%,
+    #000 50%,
+    #000 75%,
+    transparent 100%
+  );
 }
 
 .progressive-blur > div:nth-child(3) {
@@ -295,11 +380,16 @@ html.js.preload .preloader {
 }
 
 @keyframes lightbox-in {
-  from { opacity: 0; }
+  from {
+    opacity: 0;
+  }
 }
 
 @keyframes lightbox-photo-in {
-  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

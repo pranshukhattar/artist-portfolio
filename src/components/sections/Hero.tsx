@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import hero from "../../../public/landing_page_hero.png";
 import { artist } from "@/content/artist";
 import { singles } from "@/content/music";
+import type { Photo } from "@/content/gallery";
 import { siteConfig } from "@/lib/site";
 import {
   EASE,
@@ -16,6 +17,7 @@ import {
 import { SplitWords } from "@/components/motion/MaskedReveal";
 import { SoundRoll } from "@/components/motion/SoundRoll";
 import { Icon } from "@/components/ui/Icon";
+import { Lightbox } from "@/components/ui/Lightbox";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 import { Equalizer } from "@/components/player/parts";
 import { scrollToHash } from "@/components/layout/Nav";
@@ -29,8 +31,18 @@ const latest = singles[0];
 const city = artist.basedIn.split(",")[0];
 const since = artist.milestones[0].year;
 
+// The polaroid, as a photo the shared viewer can open.
+const polaroid: Photo = {
+  id: "polaroid",
+  ...artist.portrait,
+  caption: `${city}, ${since}`,
+  meta: `${siteConfig.name} · ${siteConfig.person}`,
+  shape: "portrait",
+};
+
 export function Hero() {
   const root = useRef<HTMLElement>(null);
+  const [viewing, setViewing] = useState(false);
 
   useGSAP(
     () => {
@@ -100,7 +112,11 @@ export function Hero() {
       const panY = gsap.quickTo("[data-hero-pan]", "y", follow);
       const copyX = gsap.quickTo("[data-hero-copy]", "x", follow);
       const polaroidX = gsap.quickTo("[data-polaroid-tilt]", "x", follow);
-      const polaroidTilt = gsap.quickTo("[data-polaroid-tilt]", "rotation", follow);
+      const polaroidTilt = gsap.quickTo(
+        "[data-polaroid-tilt]",
+        "rotation",
+        follow,
+      );
 
       const onEnter = () =>
         gsap.to("[data-hero-pan]", {
@@ -163,7 +179,10 @@ export function Hero() {
       {/* Media: parallax wrapper → intro scale wrapper → hover zoom/follow layer. */}
       <div data-hero-parallax className="absolute inset-0">
         <div data-hero-media className="absolute inset-0">
-          <div data-hero-pan className="absolute inset-0 will-change-transform">
+          <div
+            data-hero-pan
+            className="grain absolute inset-0 will-change-transform"
+          >
             <Image
               src={hero}
               alt="A collage of worn vinyl records and hand-lettered labels in red, black, teal and mustard"
@@ -209,7 +228,7 @@ export function Hero() {
         data-hero-copy
         className="wrap relative flex h-full flex-col pt-[calc(64px+3svh)] pb-[calc(84px+env(safe-area-inset-bottom))] md:justify-center md:pt-0 md:pb-0"
       >
-        {/* Editorial details above the headline: a hairline, the name and where from. */}
+        {/* Editorial details above the headline: a hairline, the project and the person behind it. */}
         <span
           data-intro
           aria-hidden="true"
@@ -221,9 +240,7 @@ export function Hero() {
             aria-hidden="true"
             className="size-[3px] rounded-full bg-paper/50"
           />
-          <span className="opacity-60">
-            {city} · Est. {since}
-          </span>
+          <span className="opacity-60">{siteConfig.person}</span>
         </p>
 
         {/* The headline sets the font size here so the polaroid can be placed and sized in em:
@@ -236,34 +253,43 @@ export function Hero() {
             <SplitWords lines={artist.tagline} />
           </h1>
 
-          {/* Polaroid: outer places it, middle sways with the cursor, inner drops in on intro. */}
+          {/* Polaroid: outer places it, middle sways with the cursor, inner drops in on intro.
+              Clicking it opens the photo in the same viewer as the gallery. */}
           <div
             data-intro
-            className="pointer-events-none absolute top-[0.02em] left-[3.55em] w-[1.12em] rotate-[7deg]"
+            className="absolute top-[0.02em] left-[3.55em] w-[1.12em] rotate-[7deg]"
           >
             <div data-polaroid-tilt>
-              <figure
-                data-polaroid-drop
-                className="relative bg-paper p-[0.05em] pb-0 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.75)]"
+              <button
+                type="button"
+                onClick={() => setViewing(true)}
+                aria-label="Open the photo"
+                data-cursor="View"
+                className="group/polaroid block w-full text-left"
               >
-                <span className="relative block aspect-[4/5] w-full overflow-hidden bg-ink-soft">
-                  <Image
-                    src={artist.portrait.src}
-                    alt={artist.portrait.alt}
-                    fill
-                    sizes="180px"
-                    className="object-cover"
-                    style={{ objectPosition: artist.portrait.position }}
+                <figure
+                  data-polaroid-drop
+                  className="relative bg-paper p-[0.05em] pb-0 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.75)] transition-transform duration-500 ease-out-expo group-hover/polaroid:scale-[1.04]"
+                >
+                  <span className="grain relative block aspect-[4/5] w-full overflow-hidden bg-ink-soft">
+                    <Image
+                      src={artist.portrait.src}
+                      alt={artist.portrait.alt}
+                      fill
+                      sizes="180px"
+                      className="object-cover"
+                      style={{ objectPosition: artist.portrait.position }}
+                    />
+                  </span>
+                  <figcaption className="py-[0.45em] text-center font-hand text-[clamp(14px,1.25vw,22px)] leading-none text-ink">
+                    {polaroid.caption}
+                  </figcaption>
+                  <span
+                    aria-hidden="true"
+                    className="absolute -top-[0.07em] left-1/2 h-[0.15em] w-[0.5em] -translate-x-1/2 -rotate-[5deg] bg-paper/75 shadow-sm"
                   />
-                </span>
-                <figcaption className="py-[0.45em] text-center font-hand text-[clamp(14px,1.25vw,22px)] leading-none text-ink">
-                  {city}, {since}
-                </figcaption>
-                <span
-                  aria-hidden="true"
-                  className="absolute -top-[0.07em] left-1/2 h-[0.15em] w-[0.5em] -translate-x-1/2 -rotate-[5deg] bg-paper/75 shadow-sm"
-                />
-              </figure>
+                </figure>
+              </button>
             </div>
           </div>
         </div>
@@ -344,6 +370,15 @@ export function Hero() {
           </span>
         </a>
       </div>
+
+      {viewing && (
+        <Lightbox
+          photos={[polaroid]}
+          index={0}
+          onChange={() => {}}
+          onClose={() => setViewing(false)}
+        />
+      )}
     </section>
   );
 }

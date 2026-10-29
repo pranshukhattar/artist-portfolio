@@ -28,7 +28,7 @@ export function Cover({ crop, alt, className = "", priority }: Props) {
   const tx = centreOffset(crop.x, crop.zoom);
   const ty = centreOffset(crop.y, crop.zoom);
   return (
-    <div className={`relative overflow-hidden bg-ink-soft ${className}`}>
+    <div className={`grain relative overflow-hidden bg-ink-soft ${className}`}>
       <Image
         src={hero}
         alt={alt}

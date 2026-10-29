@@ -37,7 +37,7 @@ export function About() {
     <Chapter id="about" theme="light" chapter="03 — The person" label="About" surface="bg-paper-hi" className="pt-20 pb-32 md:pt-28 md:pb-44">
       <div ref={root} className="wrap grid gap-10 md:grid-cols-12 md:items-center md:gap-10">
         <div className="mx-auto w-full max-w-sm md:col-span-4 md:max-w-none">
-          <div data-portrait-frame className="relative aspect-[4/3] overflow-hidden md:aspect-[4/5] shadow-[0_1px_2px_rgba(0,0,0,0.1),0_24px_48px_-20px_rgba(0,0,0,0.35)]">
+          <div data-portrait-frame className="grain relative aspect-[4/3] overflow-hidden md:aspect-[4/5] shadow-[0_1px_2px_rgba(0,0,0,0.1),0_24px_48px_-20px_rgba(0,0,0,0.35)]">
             <div data-portrait className="absolute -inset-y-[10%] inset-x-0">
               <Image src={artist.photo.src} alt={artist.photo.alt} fill sizes="(min-width: 768px) 34vw, 384px" className="object-cover" />
             </div>

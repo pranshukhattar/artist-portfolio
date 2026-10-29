@@ -88,7 +88,7 @@ function VideoCard({ video, featured = false }: { video: Video; featured?: boole
 
   const content = (
     <>
-      <div data-poster className="absolute inset-0 transition-transform duration-[1200ms] ease-out-expo group-hover:scale-[1.03]">
+      <div data-poster className="grain absolute inset-0 transition-transform duration-[1200ms] ease-out-expo group-hover:scale-[1.03]">
         <Image
           src={video.poster}
           alt=""

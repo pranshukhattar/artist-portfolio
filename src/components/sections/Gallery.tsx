@@ -1,28 +1,23 @@
 "use client";
 
-import { useEffect, useRef, useState, type TouchEvent } from "react";
-import { createPortal } from "react-dom";
-import Image from "next/image";
+import { useRef, useState } from "react";
 import { siteConfig } from "@/lib/site";
 import { photos, type Photo } from "@/content/gallery";
-import { gsap, lockScroll, ScrollTrigger, useGSAP } from "@/lib/motion";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/motion";
 import { Chapter, ChapterTitle } from "@/components/motion/Chapter";
 import { MaskedReveal } from "@/components/motion/MaskedReveal";
-import { Cover } from "@/components/ui/Cover";
 import { Icon } from "@/components/ui/Icon";
+import { Lightbox, PhotoImage } from "@/components/ui/Lightbox";
 
 // Print sizes: widths drive the swipe row; heights drive the pinned strip.
 const SHAPE = {
   portrait: {
-    ratio: 4 / 5,
     box: "aspect-[4/5] w-[64vw] group-data-[pinned]:h-[56vh] group-data-[pinned]:w-auto",
   },
   landscape: {
-    ratio: 3 / 2,
     box: "aspect-[3/2] w-[82vw] group-data-[pinned]:h-[42vh] group-data-[pinned]:w-auto",
   },
   square: {
-    ratio: 1,
     box: "aspect-square w-[70vw] group-data-[pinned]:h-[48vh] group-data-[pinned]:w-auto",
   },
 };
@@ -201,16 +196,7 @@ export function Gallery() {
         </div>
       </div>
 
-      {/* Portalled to <body>: chapters are transformed and clipped, which would trap a fixed overlay. */}
-      {open !== null &&
-        createPortal(
-          <Lightbox
-            index={open}
-            onChange={setOpen}
-            onClose={() => setOpen(null)}
-          />,
-          document.body,
-        )}
+      {open !== null && <Lightbox photos={photos} index={open} onChange={setOpen} onClose={() => setOpen(null)} />}
     </Chapter>
   );
 }
@@ -224,20 +210,6 @@ function Intro() {
       />
       <p className="mt-5 max-w-sm text-base opacity-75 md:text-lg">{intro}</p>
     </ChapterTitle>
-  );
-}
-
-function PhotoImage({ photo, sizes }: { photo: Photo; sizes: string }) {
-  return photo.src ? (
-    <Image
-      src={photo.src}
-      alt={photo.alt}
-      fill
-      sizes={sizes}
-      className="object-cover"
-    />
-  ) : (
-    <Cover crop={photo.crop} alt={photo.alt} className="size-full" />
   );
 }
 
@@ -280,135 +252,5 @@ function Print({
         <span className="label shrink-0 opacity-50">{photo.meta}</span>
       </figcaption>
     </figure>
-  );
-}
-
-function Lightbox({
-  index,
-  onChange,
-  onClose,
-}: {
-  index: number;
-  onChange: (i: number) => void;
-  onClose: () => void;
-}) {
-  const closeBtn = useRef<HTMLButtonElement>(null);
-  const touchX = useRef<number | null>(null);
-  const photo = photos[index];
-  const go = (dir: 1 | -1) =>
-    onChange((index + dir + photos.length) % photos.length);
-
-  useEffect(() => {
-    const opener = document.activeElement as HTMLElement | null;
-    lockScroll(true);
-    closeBtn.current?.focus();
-    return () => {
-      lockScroll(false);
-      opener?.focus({ preventScroll: true });
-    };
-  }, []);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") onChange((index + 1) % photos.length);
-      if (e.key === "ArrowLeft")
-        onChange((index - 1 + photos.length) % photos.length);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [index, onChange, onClose]);
-
-  const onTouchEnd = (e: TouchEvent) => {
-    if (touchX.current === null) return;
-    const dx = e.changedTouches[0].clientX - touchX.current;
-    if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
-    touchX.current = null;
-  };
-
-  const ratio = SHAPE[photo.shape].ratio;
-
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Photo viewer"
-      className="lightbox fixed inset-0 z-[80] flex flex-col bg-ink/95 text-paper backdrop-blur-sm"
-      onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
-      onTouchEnd={onTouchEnd}
-    >
-      <div className="wrap flex h-16 items-center justify-between md:h-20">
-        <span className="label tabular-nums opacity-70">
-          {String(index + 1).padStart(2, "0")} /{" "}
-          {String(photos.length).padStart(2, "0")}
-        </span>
-        <button
-          ref={closeBtn}
-          type="button"
-          onClick={onClose}
-          aria-label="Close photo viewer"
-          className="grid size-11 place-items-center rounded-full ring-1 ring-paper/30 hover:bg-paper hover:text-ink"
-        >
-          <Icon name="x" size={20} />
-        </button>
-      </div>
-
-      {/* Desktop arrows are pinned to the screen edges so they stay put whatever the photo's shape. */}
-      <div className="relative flex min-h-0 flex-1 items-center justify-center px-4">
-        <button
-          type="button"
-          onClick={() => go(-1)}
-          aria-label="Previous photo"
-          className="absolute top-1/2 left-[clamp(16px,4vw,60px)] z-10 hidden size-12 -translate-y-1/2 place-items-center rounded-full ring-1 ring-paper/30 transition-colors hover:bg-paper hover:text-ink md:grid"
-        >
-          <Icon name="arrowLeft" size={22} />
-        </button>
-        <figure
-          key={photo.id}
-          className="lightbox-photo flex flex-col items-center"
-        >
-          <div
-            className="relative overflow-hidden bg-ink-soft [--lb-max:88vw] md:[--lb-max:calc(100vw-280px)]"
-            style={{
-              aspectRatio: ratio,
-              width: `min(var(--lb-max), calc(68svh * ${ratio}))`,
-            }}
-          >
-            <PhotoImage photo={photo} sizes="90vw" />
-          </div>
-          <figcaption className="mt-5 flex flex-col items-center gap-1 text-center">
-            <span className="font-hand text-3xl">{photo.caption}</span>
-            <span className="label opacity-60">{photo.meta}</span>
-          </figcaption>
-        </figure>
-        <button
-          type="button"
-          onClick={() => go(1)}
-          aria-label="Next photo"
-          className="absolute top-1/2 right-[clamp(16px,4vw,60px)] z-10 hidden size-12 -translate-y-1/2 place-items-center rounded-full ring-1 ring-paper/30 transition-colors hover:bg-paper hover:text-ink md:grid"
-        >
-          <Icon name="arrowRight" size={22} />
-        </button>
-      </div>
-
-      <div className="flex justify-center gap-3 pt-4 pb-[max(24px,env(safe-area-inset-bottom))] md:hidden">
-        <button
-          type="button"
-          onClick={() => go(-1)}
-          aria-label="Previous photo"
-          className="grid size-12 place-items-center rounded-full ring-1 ring-paper/30"
-        >
-          <Icon name="arrowLeft" size={22} />
-        </button>
-        <button
-          type="button"
-          onClick={() => go(1)}
-          aria-label="Next photo"
-          className="grid size-12 place-items-center rounded-full ring-1 ring-paper/30"
-        >
-          <Icon name="arrowRight" size={22} />
-        </button>
-      </div>
-    </div>
   );
 }

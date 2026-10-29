@@ -8,8 +8,10 @@ export type Photo = {
   id: string;
   /** Path under /public, e.g. "/gallery/studio-01.jpg". */
   src?: string;
+  /** Where to keep the focus when the photo is cropped (CSS object-position). */
+  position?: string;
   /** Stand-in crop of the collage, used until `src` is set. */
-  crop: Crop;
+  crop?: Crop;
   alt: string;
   caption: string;
   meta: string;
